@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 from datetime import datetime
-import json
+import random
 
 # =============================
 # CONFIG
@@ -12,216 +12,71 @@ TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 st.set_page_config(page_title="CineScope", page_icon="🎬", layout="wide")
 
 # =============================
-# MODERN CINEMATIC STYLES
+# STYLES
 # =============================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap');
-
 :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: rgba(255,255,255,0.07);
-    --accent: #e8b84b;
-    --accent2: #c0392b;
-    --text: #f0ece4;
-    --muted: #7a7590;
-    --star: #f5c518;
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07); --accent: #e8b84b;
+    --text: #f0ece4; --muted: #7a7590; --star: #f5c518;
 }
-
-html, body, [data-testid="stAppViewContainer"] {
-    background: var(--bg) !important;
-    color: var(--text) !important;
-    font-family: 'DM Sans', sans-serif;
-}
-
+html, body, [data-testid="stAppViewContainer"] { background: var(--bg) !important; color: var(--text) !important; font-family: 'DM Sans', sans-serif; }
 [data-testid="stHeader"] { background: transparent !important; }
-[data-testid="stSidebar"] {
-    background: var(--surface) !important;
-    border-right: 1px solid var(--border);
-}
+[data-testid="stSidebar"] { background: var(--surface) !important; border-right: 1px solid var(--border); }
 .block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1400px; }
-
-/* ── HEADINGS ── */
-h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: var(--text) !important; }
-.site-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.6rem;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #e8b84b 0%, #f0ece4 60%, #c0392b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0;
-}
-.site-sub {
-    color: var(--muted);
-    font-size: 0.88rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 2px;
-}
-
-/* ── CARDS ── */
-.card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    transition: border-color 0.2s;
-}
-.card:hover { border-color: rgba(232,184,75,0.3); }
-
-.movie-title {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.2rem;
-    height: 2.4rem;
-    overflow: hidden;
-    margin-top: 6px;
-}
-
-/* ── STAR RATING ── */
-.stars { color: var(--star); font-size: 0.85rem; letter-spacing: 1px; }
-.rating-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(245,197,24,0.12);
-    border: 1px solid rgba(245,197,24,0.25);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 0.82rem;
-    color: var(--star);
-    font-weight: 600;
-}
-.vote-count { color: var(--muted); font-size: 0.75rem; }
-
-/* ── GENRE PILL ── */
-.genre-pill {
-    display: inline-block;
-    background: rgba(232,184,75,0.1);
-    border: 1px solid rgba(232,184,75,0.2);
-    border-radius: 20px;
-    padding: 2px 10px;
-    font-size: 0.76rem;
-    color: var(--accent);
-    margin: 2px;
-}
-
-/* ── REVIEW CARD ── */
-.review-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-}
-.reviewer-name { font-weight: 600; color: var(--text); font-size: 0.9rem; }
-.review-date { color: var(--muted); font-size: 0.78rem; }
-.review-text { color: #c8c4be; font-size: 0.88rem; line-height: 1.5; margin-top: 8px; }
-
-/* ── METRIC CARD ── */
-.metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 20px;
-    text-align: center;
-}
-.metric-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent);
-}
-.metric-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-
-/* ── TABS ── */
-[data-testid="stTabs"] button {
-    font-family: 'DM Sans', sans-serif !important;
-    color: var(--muted) !important;
-    border-radius: 8px 8px 0 0 !important;
-}
-[data-testid="stTabs"] button[aria-selected="true"] {
-    color: var(--accent) !important;
-    border-bottom: 2px solid var(--accent) !important;
-}
-
-/* ── INPUTS ── */
-[data-testid="stTextInput"] input {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 10px !important;
-    color: var(--text) !important;
-    font-family: 'DM Sans', sans-serif;
-}
-[data-testid="stSelectbox"] > div > div {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    color: var(--text) !important;
-}
-
-/* ── BUTTONS ── */
-.stButton > button {
-    background: transparent !important;
-    border: 1px solid var(--border) !important;
-    color: var(--text) !important;
-    border-radius: 8px !important;
-    font-family: 'DM Sans', sans-serif !important;
-    transition: all 0.2s !important;
-}
-.stButton > button:hover {
-    border-color: var(--accent) !important;
-    color: var(--accent) !important;
-}
-
-/* ── DIVIDER ── */
-hr { border-color: var(--border) !important; }
-
-/* ── PROGRESS BAR ── */
-.rating-bar-wrap { margin: 4px 0; }
-.rating-bar-label { color: var(--muted); font-size: 0.78rem; display: inline-block; width: 20px; }
-.rating-bar-bg { background: var(--surface2); border-radius: 4px; height: 8px; display: inline-block; width: 140px; vertical-align: middle; margin: 0 8px; }
-.rating-bar-fill { background: var(--star); border-radius: 4px; height: 8px; }
-.rating-bar-count { color: var(--muted); font-size: 0.75rem; }
-
-/* ── ANALYTICS ── */
-.analytics-header {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    color: var(--text);
-    border-left: 3px solid var(--accent);
-    padding-left: 12px;
-    margin-bottom: 16px;
-}
-
-/* ── POSTER OPEN BTN ── */
-.open-btn > button {
-    width: 100% !important;
-    font-size: 0.75rem !important;
-    padding: 4px 0 !important;
-}
+h1,h2,h3 { font-family: 'Playfair Display', serif !important; color: var(--text) !important; }
+.site-title { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 900; background: linear-gradient(135deg,#e8b84b,#f0ece4,#c0392b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin:0; }
+.site-sub { color: var(--muted); font-size: 0.82rem; letter-spacing: 2.5px; text-transform: uppercase; margin-top:2px; }
+.movie-title { font-size: 0.82rem; font-weight: 500; color: var(--text); line-height: 1.2rem; height: 2.4rem; overflow: hidden; margin-top: 6px; }
+.stars { color: var(--star); font-size: 0.85rem; }
+.rating-badge { display:inline-flex;align-items:center;gap:4px;background:rgba(245,197,24,0.12);border:1px solid rgba(245,197,24,0.25);border-radius:20px;padding:3px 10px;font-size:0.82rem;color:var(--star);font-weight:600; }
+.vote-count { color:var(--muted);font-size:0.75rem; }
+.genre-pill { display:inline-block;background:rgba(232,184,75,0.1);border:1px solid rgba(232,184,75,0.2);border-radius:20px;padding:2px 10px;font-size:0.76rem;color:var(--accent);margin:2px; }
+.review-card { background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px; }
+.reviewer-name { font-weight:600;color:var(--text);font-size:0.9rem; }
+.review-date { color:var(--muted);font-size:0.78rem; }
+.review-text { color:#c8c4be;font-size:0.88rem;line-height:1.5;margin-top:8px; }
+.metric-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;text-align:center; }
+.metric-value { font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--accent); }
+.metric-label { color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px; }
+.mood-card { background:var(--surface2);border:2px solid var(--border);border-radius:16px;padding:20px 16px;text-align:center; }
+.mood-emoji { font-size:2.4rem;margin-bottom:8px; }
+.mood-label { font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--text); }
+.mood-desc { color:var(--muted);font-size:0.76rem;margin-top:4px; }
+.wl-title { font-size:0.92rem;color:var(--text);font-weight:500; }
+.wl-meta { color:var(--muted);font-size:0.78rem;margin-top:2px; }
+.profile-avatar { width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#e8b84b,#c0392b);display:flex;align-items:center;justify-content:center;font-size:2rem;font-family:'Playfair Display',serif;color:#0a0a0f;font-weight:700; }
+[data-testid="stTabs"] button { font-family:'DM Sans',sans-serif !important; color:var(--muted) !important; }
+[data-testid="stTabs"] button[aria-selected="true"] { color:var(--accent) !important; border-bottom:2px solid var(--accent) !important; }
+[data-testid="stTextInput"] input { background:var(--surface) !important;border:1px solid var(--border) !important;border-radius:10px !important;color:var(--text) !important; }
+[data-testid="stSelectbox"] > div > div { background:var(--surface) !important;border:1px solid var(--border) !important;color:var(--text) !important; }
+.stButton > button { background:transparent !important;border:1px solid var(--border) !important;color:var(--text) !important;border-radius:8px !important;font-family:'DM Sans',sans-serif !important;transition:all 0.2s !important; }
+.stButton > button:hover { border-color:var(--accent) !important;color:var(--accent) !important; }
+hr { border-color:var(--border) !important; }
+.login-wrap { max-width:420px;margin:60px auto;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px; }
 </style>
 """, unsafe_allow_html=True)
 
 # =============================
 # SESSION STATE
 # =============================
-if "view" not in st.session_state:
-    st.session_state.view = "home"
-if "selected_tmdb_id" not in st.session_state:
-    st.session_state.selected_tmdb_id = None
-if "reviews" not in st.session_state:
-    st.session_state.reviews = {}   # {tmdb_id: [{name, rating, text, date}]}
-if "user_ratings" not in st.session_state:
-    st.session_state.user_ratings = {}  # {tmdb_id: float}
+defaults = {
+    "view": "home", "selected_tmdb_id": None,
+    "reviews": {}, "user_ratings": {},
+    "watchlist": [], "logged_in": False,
+    "username": "", "mood_selected": None,
+}
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
+
+USERS = {"sana": "1234", "demo": "demo", "admin": "admin"}
 
 qp_view = st.query_params.get("view")
-qp_id = st.query_params.get("id")
-if qp_view in ("home", "details", "analytics"):
+qp_id   = st.query_params.get("id")
+if qp_view in ("home","details","analytics","watchlist","mood","profile"):
     st.session_state.view = qp_view
 if qp_id:
     try:
@@ -231,28 +86,62 @@ if qp_id:
         pass
 
 
-def goto_home():
-    st.session_state.view = "home"
-    st.query_params["view"] = "home"
-    if "id" in st.query_params:
+def goto(view, tmdb_id=None):
+    st.session_state.view = view
+    st.query_params["view"] = view
+    if tmdb_id:
+        st.session_state.selected_tmdb_id = int(tmdb_id)
+        st.query_params["id"] = str(int(tmdb_id))
+    elif "id" in st.query_params:
         del st.query_params["id"]
     st.rerun()
 
 
-def goto_details(tmdb_id: int):
-    st.session_state.view = "details"
-    st.session_state.selected_tmdb_id = int(tmdb_id)
-    st.query_params["view"] = "details"
-    st.query_params["id"] = str(int(tmdb_id))
-    st.rerun()
+# =============================
+# LOGIN GATE
+# =============================
+if not st.session_state.logged_in:
+    st.markdown("<div class='login-wrap'>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style='font-family:Playfair Display,serif;font-size:1.8rem;color:#f0ece4;margin-bottom:4px'>🎬 CineScope</div>"
+        "<div style='color:#7a7590;font-size:0.85rem;margin-bottom:28px'>Sign in to discover, rate & review movies</div>",
+        unsafe_allow_html=True,
+    )
+    tab_in, tab_up = st.tabs(["Sign In", "Sign Up"])
 
+    with tab_in:
+        uname = st.text_input("Username", placeholder="e.g. demo", key="li_u")
+        pwd   = st.text_input("Password", type="password", key="li_p")
+        if st.button("Sign In →", use_container_width=True):
+            if uname in USERS and USERS[uname] == pwd:
+                st.session_state.logged_in = True
+                st.session_state.username  = uname
+                st.rerun()
+            else:
+                st.error("Wrong username or password.")
+        st.markdown("<div style='color:#7a7590;font-size:0.8rem;margin-top:10px'>Demo → <b style='color:#e8b84b'>demo</b> / <b style='color:#e8b84b'>demo</b></div>", unsafe_allow_html=True)
 
-def goto_analytics():
-    st.session_state.view = "analytics"
-    st.query_params["view"] = "analytics"
-    if "id" in st.query_params:
-        del st.query_params["id"]
-    st.rerun()
+    with tab_up:
+        nu = st.text_input("Choose username", key="su_u")
+        np1 = st.text_input("Password", type="password", key="su_p1")
+        np2 = st.text_input("Confirm password", type="password", key="su_p2")
+        if st.button("Create Account →", use_container_width=True):
+            if not nu.strip():
+                st.warning("Enter a username.")
+            elif nu in USERS:
+                st.error("Username taken.")
+            elif np1 != np2:
+                st.error("Passwords don't match.")
+            elif len(np1) < 3:
+                st.warning("Password too short.")
+            else:
+                USERS[nu] = np1
+                st.session_state.logged_in = True
+                st.session_state.username  = nu
+                st.rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.stop()
 
 
 # =============================
@@ -270,54 +159,46 @@ def api_get_json(path: str, params: dict | None = None):
 
 
 # =============================
-# STAR HELPERS
+# RATING HELPERS
 # =============================
 def stars_html(rating: float, max_rating: float = 10.0) -> str:
-    """Convert TMDB 0-10 rating to 5-star HTML."""
-    normalized = (rating / max_rating) * 5
-    full = int(normalized)
-    half = 1 if (normalized - full) >= 0.5 else 0
-    empty = 5 - full - half
-    return (
-        "<span class='stars'>"
-        + "★" * full
-        + ("½" if half else "")
-        + "☆" * empty
-        + "</span>"
-    )
+    n = (rating / max_rating) * 5
+    full = int(n); half = 1 if (n - full) >= 0.5 else 0; empty = 5 - full - half
+    return f"<span class='stars'>{'★'*full}{'½' if half else ''}{'☆'*empty}</span>"
 
+def rating_badge_html(rating, vote_count=0):
+    vc = f"<span class='vote-count' style='margin-left:6px'>{vote_count:,} votes</span>" if vote_count else ""
+    return f"<span class='rating-badge'>⭐ {rating:.1f}/10</span>{vc}"
 
-def rating_badge_html(rating: float, vote_count: int = 0) -> str:
-    return (
-        f"<span class='rating-badge'>⭐ {rating:.1f}/10</span>"
-        f"<span class='vote-count' style='margin-left:6px'>{vote_count:,} votes</span>"
-        if vote_count
-        else f"<span class='rating-badge'>⭐ {rating:.1f}/10</span>"
-    )
-
-
-def render_rating_bars(rating: float):
-    """Show a visual breakdown bar for the rating."""
-    # Simulate distribution bars (aesthetic only)
-    bars = [
-        ("10", int(rating * 3)),
-        ("8", int(rating * 6)),
-        ("6", int(rating * 4)),
-        ("4", int(rating * 2)),
-        ("2", max(0, int(rating - 5))),
-    ]
-    max_val = max(v for _, v in bars) or 1
+def render_rating_bars(rating):
+    bars = [("10", int(rating*3)), ("8", int(rating*6)), ("6", int(rating*4)), ("4", int(rating*2)), ("2", max(0,int(rating-5)))]
+    mx = max(v for _,v in bars) or 1
     html = ""
     for label, val in bars:
-        pct = int((val / max_val) * 100)
-        html += (
-            f"<div class='rating-bar-wrap'>"
-            f"<span class='rating-bar-label'>{label}</span>"
-            f"<span class='rating-bar-bg'><div class='rating-bar-fill' style='width:{pct}%'></div></span>"
-            f"<span class='rating-bar-count'>{val}</span>"
-            f"</div>"
-        )
+        pct = int((val/mx)*100)
+        html += (f"<div style='display:flex;align-items:center;gap:8px;margin:4px 0'>"
+                 f"<span style='color:#7a7590;font-size:0.78rem;width:20px'>{label}</span>"
+                 f"<div style='background:#1a1a26;border-radius:4px;height:8px;flex:1'>"
+                 f"<div style='background:linear-gradient(90deg,#e8b84b,#f5c518);border-radius:4px;height:8px;width:{pct}%'></div></div>"
+                 f"<span style='color:#7a7590;font-size:0.75rem;width:24px'>{val}</span></div>")
     st.markdown(html, unsafe_allow_html=True)
+
+
+# =============================
+# WATCHLIST HELPERS
+# =============================
+def in_watchlist(tmdb_id):
+    return any(w["tmdb_id"] == tmdb_id for w in st.session_state.watchlist)
+
+def add_to_watchlist(tmdb_id, title, poster_url, genres=""):
+    if not in_watchlist(tmdb_id):
+        st.session_state.watchlist.append({
+            "tmdb_id": tmdb_id, "title": title, "poster_url": poster_url,
+            "genres": genres, "added_on": datetime.now().strftime("%b %d, %Y"),
+        })
+
+def remove_from_watchlist(tmdb_id):
+    st.session_state.watchlist = [w for w in st.session_state.watchlist if w["tmdb_id"] != tmdb_id]
 
 
 # =============================
@@ -327,302 +208,324 @@ def poster_grid(cards, cols=6, key_prefix="grid", show_rating=False):
     if not cards:
         st.info("No movies to show.")
         return
-
     rows = (len(cards) + cols - 1) // cols
     idx = 0
     for r in range(rows):
         colset = st.columns(cols)
         for c in range(cols):
-            if idx >= len(cards):
-                break
-            m = cards[idx]
-            idx += 1
-            tmdb_id = m.get("tmdb_id")
-            title = m.get("title", "Untitled")
-            poster = m.get("poster_url")
-            rating = m.get("vote_average") or m.get("rating")
-
+            if idx >= len(cards): break
+            m = cards[idx]; idx += 1
+            tmdb_id = m.get("tmdb_id"); title = m.get("title","Untitled")
+            poster = m.get("poster_url"); rating = m.get("vote_average") or m.get("rating")
             with colset[c]:
                 if poster:
                     st.image(poster, use_column_width=True)
                 else:
-                    st.markdown(
-                        "<div style='background:#1a1a26;border-radius:8px;height:180px;"
-                        "display:flex;align-items:center;justify-content:center;"
-                        "color:#7a7590;font-size:2rem'>🎬</div>",
-                        unsafe_allow_html=True,
-                    )
-
-                st.markdown(
-                    f"<div class='movie-title'>{title}</div>", unsafe_allow_html=True
-                )
-
+                    st.markdown("<div style='background:#1a1a26;border-radius:8px;height:180px;display:flex;align-items:center;justify-content:center;color:#7a7590;font-size:2rem'>🎬</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='movie-title'>{title}</div>", unsafe_allow_html=True)
                 if show_rating and rating:
-                    st.markdown(
-                        f"<div style='color:#f5c518;font-size:0.78rem;margin-top:2px'>⭐ {float(rating):.1f}</div>",
-                        unsafe_allow_html=True,
-                    )
+                    st.markdown(f"<div style='color:#f5c518;font-size:0.78rem'>⭐ {float(rating):.1f}</div>", unsafe_allow_html=True)
+                if st.button("Open →", key=f"{key_prefix}_{r}_{c}_{idx}_{tmdb_id}"):
+                    if tmdb_id: goto("details", tmdb_id)
 
-                with st.container():
-                    st.markdown("<div class='open-btn'>", unsafe_allow_html=True)
-                    if st.button("Open →", key=f"{key_prefix}_{r}_{c}_{idx}_{tmdb_id}"):
-                        if tmdb_id:
-                            goto_details(tmdb_id)
-                    st.markdown("</div>", unsafe_allow_html=True)
-
-
-def to_cards_from_tfidf_items(tfidf_items):
+def to_cards_from_tfidf(items):
     cards = []
-    for x in tfidf_items or []:
-        tmdb = x.get("tmdb") or {}
-        if tmdb.get("tmdb_id"):
-            cards.append({
-                "tmdb_id": tmdb["tmdb_id"],
-                "title": tmdb.get("title") or x.get("title") or "Untitled",
-                "poster_url": tmdb.get("poster_url"),
-                "vote_average": tmdb.get("vote_average"),
-            })
+    for x in items or []:
+        t = x.get("tmdb") or {}
+        if t.get("tmdb_id"):
+            cards.append({"tmdb_id": t["tmdb_id"], "title": t.get("title") or x.get("title","Untitled"), "poster_url": t.get("poster_url"), "vote_average": t.get("vote_average")})
     return cards
 
-
-def parse_tmdb_search_to_cards(data, keyword: str, limit: int = 24):
+def parse_search_to_cards(data, keyword, limit=24):
     keyword_l = keyword.strip().lower()
     if isinstance(data, dict) and "results" in data:
-        raw = data.get("results") or []
-        raw_items = []
-        for m in raw:
-            title = (m.get("title") or "").strip()
-            tmdb_id = m.get("id")
-            poster_path = m.get("poster_path")
-            if not title or not tmdb_id:
-                continue
-            raw_items.append({
-                "tmdb_id": int(tmdb_id),
-                "title": title,
-                "poster_url": f"{TMDB_IMG}{poster_path}" if poster_path else None,
-                "release_date": m.get("release_date", ""),
-                "vote_average": m.get("vote_average"),
-            })
+        raw = [{"tmdb_id": int(m["id"]), "title": (m.get("title") or "").strip(),
+                "poster_url": f"{TMDB_IMG}{m['poster_path']}" if m.get("poster_path") else None,
+                "release_date": m.get("release_date",""), "vote_average": m.get("vote_average")}
+               for m in data.get("results",[]) if m.get("title") and m.get("id")]
     elif isinstance(data, list):
-        raw_items = []
-        for m in data:
-            tmdb_id = m.get("tmdb_id") or m.get("id")
-            title = (m.get("title") or "").strip()
-            if not title or not tmdb_id:
-                continue
-            raw_items.append({
-                "tmdb_id": int(tmdb_id),
-                "title": title,
-                "poster_url": m.get("poster_url"),
-                "release_date": m.get("release_date", ""),
-                "vote_average": m.get("vote_average"),
-            })
+        raw = [{"tmdb_id": int(m.get("tmdb_id") or m.get("id",0)), "title": (m.get("title") or "").strip(),
+                "poster_url": m.get("poster_url"), "release_date": m.get("release_date",""), "vote_average": m.get("vote_average")}
+               for m in data if (m.get("title") and (m.get("tmdb_id") or m.get("id")))]
     else:
         return [], []
-
-    matched = [x for x in raw_items if keyword_l in x["title"].lower()]
-    final_list = matched if matched else raw_items
-
-    suggestions = []
-    for x in final_list[:10]:
-        year = (x.get("release_date") or "")[:4]
-        label = f"{x['title']} ({year})" if year else x["title"]
-        suggestions.append((label, x["tmdb_id"]))
-
-    cards = [
-        {"tmdb_id": x["tmdb_id"], "title": x["title"],
-         "poster_url": x["poster_url"], "vote_average": x.get("vote_average")}
-        for x in final_list[:limit]
-    ]
+    matched = [x for x in raw if keyword_l in x["title"].lower()] or raw
+    suggestions = [(f"{x['title']} ({x['release_date'][:4]})" if x.get("release_date") else x["title"], x["tmdb_id"]) for x in matched[:10]]
+    cards = [{"tmdb_id": x["tmdb_id"], "title": x["title"], "poster_url": x["poster_url"], "vote_average": x.get("vote_average")} for x in matched[:limit]]
     return suggestions, cards
+
+
+# =============================
+# MOOD CONFIG
+# =============================
+MOODS = [
+    {"emoji": "😂", "label": "Feel-Good",   "desc": "Comedy & fun",          "genres": ["Comedy","Animation","Family"],         "query": "funny comedy"},
+    {"emoji": "😱", "label": "Thriller",     "desc": "Edge-of-seat suspense", "genres": ["Thriller","Horror","Mystery"],          "query": "thriller suspense"},
+    {"emoji": "❤️",  "label": "Romantic",    "desc": "Love stories",          "genres": ["Romance","Drama"],                     "query": "romance love story"},
+    {"emoji": "🚀", "label": "Adventure",    "desc": "Action & epic journeys","genres": ["Action","Adventure","Sci-Fi"],          "query": "action adventure"},
+    {"emoji": "😢", "label": "Emotional",    "desc": "Tear-jerkers",          "genres": ["Drama","History","War"],               "query": "emotional drama"},
+    {"emoji": "🧠", "label": "Mind-Bending", "desc": "Twists & sci-fi",       "genres": ["Science Fiction","Mystery","Thriller"], "query": "mind bending sci-fi"},
+]
 
 
 # =============================
 # SIDEBAR
 # =============================
 with st.sidebar:
+    uname = st.session_state.username
+    initial = uname[0].upper() if uname else "?"
     st.markdown(
-        "<div style='font-family:Playfair Display,serif;font-size:1.3rem;"
-        "font-weight:700;color:#e8b84b;margin-bottom:4px'>🎬 CineScope</div>",
+        f"<div style='display:flex;align-items:center;gap:12px;margin-bottom:16px'>"
+        f"<div class='profile-avatar'>{initial}</div>"
+        f"<div><div style='color:#f0ece4;font-weight:600'>{uname}</div>"
+        f"<div style='color:#7a7590;font-size:0.75rem'>Movie Explorer</div></div></div>",
         unsafe_allow_html=True,
     )
-    st.markdown(
-        "<div style='color:#7a7590;font-size:0.75rem;letter-spacing:2px;"
-        "text-transform:uppercase;margin-bottom:16px'>Navigation</div>",
-        unsafe_allow_html=True,
-    )
-
-    if st.button("🏠  Home"):
-        goto_home()
-    if st.button("📊  Analytics"):
-        goto_analytics()
-
     st.divider()
-    st.markdown(
-        "<div style='color:#7a7590;font-size:0.78rem;text-transform:uppercase;"
-        "letter-spacing:1px;margin-bottom:8px'>Home Feed</div>",
-        unsafe_allow_html=True,
-    )
-    home_category = st.selectbox(
-        "Category",
-        ["trending", "popular", "top_rated", "now_playing", "upcoming"],
-        index=0,
-        label_visibility="collapsed",
-    )
+    for icon, label, vkey in [("🏠","Home","home"),("🎯","Mood Pick","mood"),("🔖","Watchlist","watchlist"),("📊","Analytics","analytics"),("👤","Profile","profile")]:
+        if st.button(f"{icon}  {label}", key=f"nav_{vkey}", use_container_width=True):
+            goto(vkey)
+    st.divider()
+    st.markdown("<div style='color:#7a7590;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>Home Feed</div>", unsafe_allow_html=True)
+    home_category = st.selectbox("Category", ["trending","popular","top_rated","now_playing","upcoming"], index=0, label_visibility="collapsed")
     grid_cols = st.slider("Grid columns", 4, 8, 6)
-
     st.divider()
-    # Mini stats
-    total_rated = len(st.session_state.user_ratings)
-    total_reviewed = sum(len(v) for v in st.session_state.reviews.values())
     st.markdown(
-        f"<div style='color:#7a7590;font-size:0.78rem'>Your Activity</div>"
-        f"<div style='color:#e8b84b;font-size:1.1rem;font-weight:600'>{total_rated} rated · {total_reviewed} reviews</div>",
+        f"<div style='color:#7a7590;font-size:0.75rem'>Activity</div>"
+        f"<div style='color:#e8b84b;font-size:0.92rem;font-weight:600;margin-top:4px'>"
+        f"🔖 {len(st.session_state.watchlist)} &nbsp;|&nbsp; ⭐ {len(st.session_state.user_ratings)} &nbsp;|&nbsp; 📝 {sum(len(v) for v in st.session_state.reviews.values())}</div>",
         unsafe_allow_html=True,
     )
+    st.divider()
+    if st.button("🚪 Sign Out", use_container_width=True):
+        st.session_state.logged_in = False
+        st.session_state.username = ""
+        st.rerun()
 
 
 # =============================
 # HEADER
 # =============================
-col_title, col_right = st.columns([3, 1])
-with col_title:
-    st.markdown("<p class='site-title'>CineScope</p>", unsafe_allow_html=True)
-    st.markdown(
-        "<p class='site-sub'>Discover · Rate · Review</p>", unsafe_allow_html=True
-    )
+st.markdown("<p class='site-title'>CineScope</p>", unsafe_allow_html=True)
+st.markdown("<p class='site-sub'>Discover · Rate · Review · Watchlist</p>", unsafe_allow_html=True)
 st.divider()
 
 
 # ==========================================================
-# VIEW: ANALYTICS DASHBOARD
+# VIEW: PROFILE
 # ==========================================================
-if st.session_state.view == "analytics":
-    st.markdown(
-        "<div class='analytics-header'>📊 Your Analytics Dashboard</div>",
-        unsafe_allow_html=True,
-    )
-
-    # ── Metrics Row ──
+if st.session_state.view == "profile":
+    uname = st.session_state.username
     total_rated = len(st.session_state.user_ratings)
-    total_reviewed = sum(len(v) for v in st.session_state.reviews.values())
-    avg_rating = (
-        round(sum(st.session_state.user_ratings.values()) / total_rated, 1)
-        if total_rated > 0 else 0
-    )
-    top_score = (
-        max(st.session_state.user_ratings.values()) if total_rated > 0 else 0
-    )
+    total_rev   = sum(len(v) for v in st.session_state.reviews.values())
+    avg_r = round(sum(st.session_state.user_ratings.values()) / total_rated, 1) if total_rated else 0
 
-    m1, m2, m3, m4 = st.columns(4)
-    for col, val, label in [
-        (m1, total_rated, "Movies Rated"),
-        (m2, total_reviewed, "Reviews Written"),
-        (m3, f"{avg_rating}★", "Avg Rating Given"),
-        (m4, f"{top_score}★", "Highest Rating"),
-    ]:
-        with col:
-            st.markdown(
-                f"<div class='metric-card'>"
-                f"<div class='metric-value'>{val}</div>"
-                f"<div class='metric-label'>{label}</div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-
-    st.divider()
-
-    col_left, col_right = st.columns([1, 1], gap="large")
-
-    with col_left:
-        st.markdown("#### ⭐ Your Ratings Distribution")
-        if total_rated > 0:
-            buckets = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-            for v in st.session_state.user_ratings.values():
-                bucket = min(5, max(1, round(v)))
-                buckets[bucket] = buckets.get(bucket, 0) + 1
-
-            for star in range(5, 0, -1):
-                count = buckets.get(star, 0)
-                pct = int((count / total_rated) * 100) if total_rated > 0 else 0
-                bar_html = (
-                    f"<div style='display:flex;align-items:center;gap:10px;margin:5px 0'>"
-                    f"<span style='color:#f5c518;width:50px;font-size:0.85rem'>{'★'*star}</span>"
-                    f"<div style='background:#1a1a26;border-radius:4px;height:10px;flex:1'>"
-                    f"<div style='background:linear-gradient(90deg,#e8b84b,#f5c518);"
-                    f"border-radius:4px;height:10px;width:{pct}%'></div></div>"
-                    f"<span style='color:#7a7590;font-size:0.8rem;width:30px'>{count}</span>"
-                    f"</div>"
-                )
-                st.markdown(bar_html, unsafe_allow_html=True)
-        else:
-            st.markdown(
-                "<div style='color:#7a7590;padding:20px 0'>Rate some movies to see your distribution.</div>",
-                unsafe_allow_html=True,
-            )
-
-    with col_right:
-        st.markdown("#### 📝 Your Recent Reviews")
-        all_reviews = []
-        for mid, revs in st.session_state.reviews.items():
-            for rev in revs:
-                all_reviews.append({**rev, "tmdb_id": mid})
-        all_reviews.sort(key=lambda x: x.get("date", ""), reverse=True)
-
-        if all_reviews:
-            for rev in all_reviews[:5]:
-                st.markdown(
-                    f"<div class='review-card'>"
-                    f"<div style='display:flex;justify-content:space-between'>"
-                    f"<span class='reviewer-name'>{rev.get('name','Anonymous')}</span>"
-                    f"<span class='stars' style='font-size:0.8rem'>{'★'*int(rev.get('rating',0))}{'☆'*(5-int(rev.get('rating',0)))}</span>"
-                    f"</div>"
-                    f"<div class='review-date'>{rev.get('date','')}</div>"
-                    f"<div class='review-text'>{rev.get('text','')}</div>"
-                    f"</div>",
-                    unsafe_allow_html=True,
-                )
-        else:
-            st.markdown(
-                "<div style='color:#7a7590;padding:20px 0'>No reviews yet. Open a movie and leave a review!</div>",
-                unsafe_allow_html=True,
-            )
-
-    st.divider()
-    st.markdown("#### 🏆 Your Top Rated Movies")
-    if st.session_state.user_ratings:
-        sorted_ratings = sorted(
-            st.session_state.user_ratings.items(), key=lambda x: x[1], reverse=True
-        )[:10]
-        for rank, (mid, score) in enumerate(sorted_ratings, 1):
-            st.markdown(
-                f"<div style='display:flex;align-items:center;gap:12px;padding:8px 0;"
-                f"border-bottom:1px solid rgba(255,255,255,0.05)'>"
-                f"<span style='color:#e8b84b;font-family:Playfair Display,serif;"
-                f"font-size:1.1rem;font-weight:700;width:28px'>#{rank}</span>"
-                f"<span style='color:#f0ece4'>Movie ID: {mid}</span>"
-                f"<span style='color:#f5c518;margin-left:auto'>{'★'*int(score)}{'☆'*(5-int(score))} {score}/5</span>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-    else:
+    left, right = st.columns([1, 2], gap="large")
+    with left:
         st.markdown(
-            "<div style='color:#7a7590'>Rate movies to see your top picks here.</div>",
+            f"<div style='background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;text-align:center'>"
+            f"<div class='profile-avatar' style='margin:0 auto 16px auto'>{uname[0].upper()}</div>"
+            f"<div style='font-family:Playfair Display,serif;font-size:1.4rem;color:#f0ece4'>{uname}</div>"
+            f"<div style='color:#7a7590;font-size:0.82rem;margin-top:4px'>Member since {datetime.now().strftime('%b %Y')}</div>"
+            f"<div style='margin-top:20px;display:flex;justify-content:space-around'>"
+            f"<div><div style='color:#e8b84b;font-size:1.3rem;font-weight:700'>{total_rated}</div><div style='color:#7a7590;font-size:0.75rem'>Rated</div></div>"
+            f"<div><div style='color:#e8b84b;font-size:1.3rem;font-weight:700'>{total_rev}</div><div style='color:#7a7590;font-size:0.75rem'>Reviews</div></div>"
+            f"<div><div style='color:#e8b84b;font-size:1.3rem;font-weight:700'>{len(st.session_state.watchlist)}</div><div style='color:#7a7590;font-size:0.75rem'>Watchlist</div></div>"
+            f"</div></div>",
             unsafe_allow_html=True,
         )
 
-    st.stop()
+    with right:
+        st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.2rem;color:#f0ece4;margin-bottom:16px'>🏆 Top Rated</div>", unsafe_allow_html=True)
+        if st.session_state.user_ratings:
+            for rank, (mid, score) in enumerate(sorted(st.session_state.user_ratings.items(), key=lambda x: x[1], reverse=True)[:8], 1):
+                st.markdown(
+                    f"<div style='display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)'>"
+                    f"<span style='color:#e8b84b;font-family:Playfair Display,serif;width:26px'>#{rank}</span>"
+                    f"<span style='color:#f0ece4;font-size:0.9rem'>Movie ID {mid}</span>"
+                    f"<span style='color:#f5c518;margin-left:auto'>{'★'*int(score)}{'☆'*(5-int(score))} {score}/5</span></div>",
+                    unsafe_allow_html=True,
+                )
+        else:
+            st.markdown("<div style='color:#7a7590'>Rate movies to build your profile!</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.2rem;color:#f0ece4;margin:20px 0 12px'>📝 Recent Reviews</div>", unsafe_allow_html=True)
+        all_revs = [(mid, rev) for mid, revs in st.session_state.reviews.items() for rev in revs]
+        if all_revs:
+            for mid, rev in all_revs[-3:]:
+                st.markdown(
+                    f"<div class='review-card'><div style='display:flex;justify-content:space-between'>"
+                    f"<span style='color:#f5c518'>{'★'*rev['rating']}{'☆'*(5-rev['rating'])}</span>"
+                    f"<span class='review-date'>{rev['date']}</span></div>"
+                    f"<div class='review-text'>{rev['text'][:120]}{'...' if len(rev['text'])>120 else ''}</div></div>",
+                    unsafe_allow_html=True,
+                )
+        else:
+            st.markdown("<div style='color:#7a7590'>No reviews yet.</div>", unsafe_allow_html=True)
+
+
+# ==========================================================
+# VIEW: MOOD RECOMMENDER
+# ==========================================================
+elif st.session_state.view == "mood":
+    st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:4px'>🎯 Mood-Based Recommender</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color:#7a7590;font-size:0.88rem;margin-bottom:24px'>How are you feeling today? We'll find the perfect movies for your mood.</div>", unsafe_allow_html=True)
+
+    cols = st.columns(6)
+    for i, mood in enumerate(MOODS):
+        with cols[i]:
+            selected = st.session_state.mood_selected == mood["label"]
+            bc = "#e8b84b" if selected else "rgba(255,255,255,0.07)"
+            st.markdown(f"<div class='mood-card' style='border-color:{bc}'><div class='mood-emoji'>{mood['emoji']}</div><div class='mood-label'>{mood['label']}</div><div class='mood-desc'>{mood['desc']}</div></div>", unsafe_allow_html=True)
+            if st.button("Pick", key=f"mood_{i}", use_container_width=True):
+                st.session_state.mood_selected = mood["label"]
+                st.rerun()
+
+    if st.session_state.mood_selected:
+        mood_obj = next((m for m in MOODS if m["label"] == st.session_state.mood_selected), None)
+        if mood_obj:
+            st.divider()
+            st.markdown(
+                f"<div style='display:flex;align-items:center;gap:12px;margin-bottom:16px'>"
+                f"<span style='font-size:2rem'>{mood_obj['emoji']}</span>"
+                f"<div><div style='font-family:Playfair Display,serif;font-size:1.3rem;color:#f0ece4'>{mood_obj['label']} Movies</div>"
+                f"<div style='color:#7a7590;font-size:0.85rem'>{mood_obj['desc']}</div></div></div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown("".join(f"<span class='genre-pill'>{g}</span>" for g in mood_obj["genres"]), unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            data, err = api_get_json("/tmdb/search", params={"query": mood_obj["query"]})
+            if err or data is None:
+                st.error(f"Could not load: {err}")
+            else:
+                _, cards = parse_search_to_cards(data, mood_obj["query"], limit=18)
+                if cards:
+                    poster_grid(cards, cols=grid_cols, key_prefix=f"mood_{mood_obj['label']}", show_rating=True)
+                else:
+                    st.info("No movies found. Try another mood!")
+
+
+# ==========================================================
+# VIEW: WATCHLIST
+# ==========================================================
+elif st.session_state.view == "watchlist":
+    st.markdown(f"<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:4px'>🔖 My Watchlist</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='color:#7a7590;font-size:0.88rem;margin-bottom:20px'>{len(st.session_state.watchlist)} movies saved</div>", unsafe_allow_html=True)
+
+    if not st.session_state.watchlist:
+        st.markdown(
+            "<div style='text-align:center;padding:60px 0'>"
+            "<div style='font-size:3rem'>🎬</div>"
+            "<div style='font-family:Playfair Display,serif;font-size:1.2rem;color:#f0ece4;margin-top:12px'>Watchlist is empty</div>"
+            "<div style='color:#7a7590;font-size:0.88rem;margin-top:8px'>Open any movie → click 🔖 Add to Watchlist</div></div>",
+            unsafe_allow_html=True,
+        )
+    else:
+        wl_view = st.radio("View", ["Grid","List"], horizontal=True, label_visibility="collapsed")
+        if wl_view == "Grid":
+            poster_grid(st.session_state.watchlist, cols=grid_cols, key_prefix="wl_grid")
+            st.divider()
+            if st.button("🗑️ Clear Watchlist"):
+                st.session_state.watchlist = []
+                st.rerun()
+        else:
+            for i, w in enumerate(st.session_state.watchlist):
+                c1, c2, c3 = st.columns([1, 5, 1])
+                with c1:
+                    if w.get("poster_url"):
+                        st.image(w["poster_url"], width=60)
+                    else:
+                        st.markdown("<div style='width:60px;height:80px;background:#1a1a26;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#7a7590'>🎬</div>", unsafe_allow_html=True)
+                with c2:
+                    st.markdown(f"<div class='wl-title'>{w['title']}</div><div class='wl-meta'>Added {w.get('added_on','')} · {w.get('genres','')}</div>", unsafe_allow_html=True)
+                with c3:
+                    if st.button("Open", key=f"wl_o_{i}"): goto("details", w["tmdb_id"])
+                    if st.button("✕", key=f"wl_r_{i}"):
+                        remove_from_watchlist(w["tmdb_id"]); st.rerun()
+                st.markdown("<hr style='margin:4px 0;border-color:rgba(255,255,255,0.05)'>", unsafe_allow_html=True)
+
+
+# ==========================================================
+# VIEW: ANALYTICS
+# ==========================================================
+elif st.session_state.view == "analytics":
+    st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:20px;border-left:3px solid #e8b84b;padding-left:12px'>📊 Analytics Dashboard</div>", unsafe_allow_html=True)
+
+    total_rated = len(st.session_state.user_ratings)
+    total_rev   = sum(len(v) for v in st.session_state.reviews.values())
+    avg_r       = round(sum(st.session_state.user_ratings.values()) / total_rated, 1) if total_rated else 0
+    wl_count    = len(st.session_state.watchlist)
+
+    m1, m2, m3, m4 = st.columns(4)
+    for col, val, label in [(m1,total_rated,"Movies Rated"),(m2,total_rev,"Reviews"),(m3,f"{avg_r}★","Avg Rating"),(m4,wl_count,"Watchlist")]:
+        with col:
+            st.markdown(f"<div class='metric-card'><div class='metric-value'>{val}</div><div class='metric-label'>{label}</div></div>", unsafe_allow_html=True)
+
+    st.divider()
+    cl, cr = st.columns(2, gap="large")
+
+    with cl:
+        st.markdown("#### ⭐ Ratings Distribution")
+        if total_rated > 0:
+            import pandas as pd
+            buckets = {1:0,2:0,3:0,4:0,5:0}
+            for v in st.session_state.user_ratings.values():
+                buckets[min(5,max(1,round(v)))] += 1
+            df = pd.DataFrame({"Stars": [f"{'★'*s}" for s in range(1,6)], "Count": [buckets[s] for s in range(1,6)]})
+            st.bar_chart(df.set_index("Stars"), color="#e8b84b", height=220)
+        else:
+            st.markdown("<div style='color:#7a7590;padding:40px 0;text-align:center'>Rate movies to see your chart</div>", unsafe_allow_html=True)
+
+    with cr:
+        st.markdown("#### 🎭 Watchlist Genre Breakdown")
+        if st.session_state.watchlist:
+            import pandas as pd
+            gc: dict = {}
+            for w in st.session_state.watchlist:
+                for g in (w.get("genres") or "").split(","):
+                    g = g.strip()
+                    if g: gc[g] = gc.get(g,0) + 1
+            if gc:
+                df_g = pd.DataFrame({"Genre":list(gc.keys()),"Count":list(gc.values())}).sort_values("Count",ascending=False).head(8)
+                st.bar_chart(df_g.set_index("Genre"), color="#c0392b", height=220)
+            else:
+                st.markdown("<div style='color:#7a7590;padding:40px 0;text-align:center'>Add movies to see genre breakdown</div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='color:#7a7590;padding:40px 0;text-align:center'>Add movies to watchlist first</div>", unsafe_allow_html=True)
+
+    st.divider()
+    st.markdown("#### 📈 Trending Movies — Popularity This Week")
+    import pandas as pd, numpy as np
+    titles = ["Inception","Interstellar","Dark Knight","Avengers","Parasite","Dune","Oppenheimer","Avatar"]
+    days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    np.random.seed(42)
+    df_trend = pd.DataFrame(
+        {t: np.clip(np.cumsum(np.random.randint(-3,8,7)) + 65, 40, 100) for t in titles[:5]},
+        index=days
+    )
+    st.line_chart(df_trend, height=240)
+    st.markdown("<div style='color:#7a7590;font-size:0.75rem'>Simulated popularity trend — for visualization</div>", unsafe_allow_html=True)
+
+    st.divider()
+    st.markdown("#### 📝 Recent Reviews")
+    all_revs = [(mid,rev) for mid,revs in st.session_state.reviews.items() for rev in revs]
+    if all_revs:
+        for mid, rev in reversed(all_revs[-5:]):
+            st.markdown(
+                f"<div class='review-card'><div style='display:flex;justify-content:space-between;align-items:center'>"
+                f"<span class='reviewer-name'>{rev['name']}</span><span style='color:#f5c518'>{'★'*rev['rating']}{'☆'*(5-rev['rating'])}</span></div>"
+                f"<div class='review-date'>{rev['date']}</div><div class='review-text'>{rev['text']}</div></div>",
+                unsafe_allow_html=True,
+            )
+    else:
+        st.markdown("<div style='color:#7a7590'>No reviews yet.</div>", unsafe_allow_html=True)
 
 
 # ==========================================================
 # VIEW: HOME
 # ==========================================================
-if st.session_state.view == "home":
-    typed = st.text_input(
-        "Search by movie title",
-        placeholder="🔍  Type: avengers, batman, love...",
-        label_visibility="collapsed",
-    )
+elif st.session_state.view == "home":
+    typed = st.text_input("Search", placeholder="🔍  avengers, batman, love...", label_visibility="collapsed")
     st.divider()
 
     if typed.strip():
@@ -633,38 +536,23 @@ if st.session_state.view == "home":
             if err or data is None:
                 st.error(f"Search failed: {err}")
             else:
-                suggestions, cards = parse_tmdb_search_to_cards(data, typed.strip(), limit=24)
-
+                suggestions, cards = parse_search_to_cards(data, typed.strip(), limit=24)
                 if suggestions:
                     labels = ["-- Select a movie --"] + [s[0] for s in suggestions]
-                    selected = st.selectbox("Suggestions", labels, index=0, label_visibility="collapsed")
-                    if selected != "-- Select a movie --":
-                        label_to_id = {s[0]: s[1] for s in suggestions}
-                        goto_details(label_to_id[selected])
+                    sel = st.selectbox("Suggestions", labels, index=0, label_visibility="collapsed")
+                    if sel != "-- Select a movie --":
+                        goto("details", {s[0]: s[1] for s in suggestions}[sel])
                 else:
                     st.info("No suggestions found.")
-
-                st.markdown(
-                    f"<div style='color:#7a7590;font-size:0.85rem;margin-bottom:12px'>"
-                    f"Found <b style='color:#e8b84b'>{len(cards)}</b> results for "
-                    f"<b style='color:#f0ece4'>\"{typed}\"</b></div>",
-                    unsafe_allow_html=True,
-                )
+                st.markdown(f"<div style='color:#7a7590;font-size:0.85rem;margin-bottom:12px'>Found <b style='color:#e8b84b'>{len(cards)}</b> results for <b style='color:#f0ece4'>\"{typed}\"</b></div>", unsafe_allow_html=True)
                 poster_grid(cards, cols=grid_cols, key_prefix="search", show_rating=True)
         st.stop()
 
-    st.markdown(
-        f"<div style='font-family:Playfair Display,serif;font-size:1.3rem;"
-        f"color:#f0ece4;margin-bottom:16px'>"
-        f"{home_category.replace('_',' ').title()}</div>",
-        unsafe_allow_html=True,
-    )
-
+    st.markdown(f"<div style='font-family:Playfair Display,serif;font-size:1.3rem;color:#f0ece4;margin-bottom:16px'>{home_category.replace('_',' ').title()}</div>", unsafe_allow_html=True)
     home_cards, err = api_get_json("/home", params={"category": home_category, "limit": 24})
     if err or not home_cards:
         st.error(f"Home feed failed: {err or 'Unknown error'}")
         st.stop()
-
     poster_grid(home_cards, cols=grid_cols, key_prefix="home_feed", show_rating=True)
 
 
@@ -675,259 +563,115 @@ elif st.session_state.view == "details":
     tmdb_id = st.session_state.selected_tmdb_id
     if not tmdb_id:
         st.warning("No movie selected.")
-        if st.button("← Back"):
-            goto_home()
+        if st.button("← Back"): goto("home")
         st.stop()
 
-    if st.button("← Back to Home"):
-        goto_home()
+    if st.button("← Back to Home"): goto("home")
 
     data, err = api_get_json(f"/movie/id/{tmdb_id}")
     if err or not data:
-        st.error(f"Could not load details: {err or 'Unknown error'}")
+        st.error(f"Could not load: {err or 'Unknown error'}")
         st.stop()
 
-    # ── MAIN LAYOUT ──
     left, right = st.columns([1, 2.5], gap="large")
 
     with left:
         if data.get("poster_url"):
             st.image(data["poster_url"], use_container_width=True)
         else:
-            st.markdown(
-                "<div style='background:#1a1a26;border-radius:12px;height:380px;"
-                "display:flex;align-items:center;justify-content:center;"
-                "color:#7a7590;font-size:3rem'>🎬</div>",
-                unsafe_allow_html=True,
-            )
+            st.markdown("<div style='background:#1a1a26;border-radius:12px;height:380px;display:flex;align-items:center;justify-content:center;color:#7a7590;font-size:3rem'>🎬</div>", unsafe_allow_html=True)
 
     with right:
-        title = data.get("title", "Untitled")
-        release = (data.get("release_date") or "")[:4]
+        title    = data.get("title","Untitled")
+        release  = (data.get("release_date") or "")[:4]
         vote_avg = data.get("vote_average") or 0
         vote_cnt = data.get("vote_count") or 0
-        runtime = data.get("runtime")
-        genres = data.get("genres", [])
+        runtime  = data.get("runtime")
+        genres   = data.get("genres", [])
         overview = data.get("overview") or "No overview available."
+        genre_str = ", ".join(g["name"] for g in genres)
 
-        st.markdown(
-            f"<h1 style='margin-bottom:4px'>{title}"
-            f"<span style='color:#7a7590;font-size:1.2rem;font-weight:400;margin-left:10px'>({release})</span>"
-            f"</h1>",
-            unsafe_allow_html=True,
-        )
-
-        # Genres
+        st.markdown(f"<h1 style='margin-bottom:4px'>{title} <span style='color:#7a7590;font-size:1.1rem;font-weight:400'>({release})</span></h1>", unsafe_allow_html=True)
         if genres:
-            pills = "".join(
-                f"<span class='genre-pill'>{g['name']}</span>"
-                for g in genres
-            )
-            st.markdown(f"<div style='margin:8px 0'>{pills}</div>", unsafe_allow_html=True)
-
-        # Rating badge + star display
+            st.markdown("".join(f"<span class='genre-pill'>{g['name']}</span>" for g in genres), unsafe_allow_html=True)
         if vote_avg:
-            st.markdown(
-                f"<div style='margin:12px 0'>"
-                f"{rating_badge_html(vote_avg, vote_cnt)}"
-                f"<div style='margin-top:6px'>{stars_html(vote_avg)}</div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
+            st.markdown(f"<div style='margin:12px 0'>{rating_badge_html(vote_avg, vote_cnt)}<div style='margin-top:6px'>{stars_html(vote_avg)}</div></div>", unsafe_allow_html=True)
             render_rating_bars(vote_avg)
-
         if runtime:
-            st.markdown(
-                f"<div style='color:#7a7590;font-size:0.85rem;margin-top:8px'>🕐 {runtime} min</div>",
-                unsafe_allow_html=True,
-            )
-
+            st.markdown(f"<div style='color:#7a7590;font-size:0.85rem;margin-top:8px'>🕐 {runtime} min</div>", unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown(
-            f"<div style='color:#c8c4be;font-size:0.95rem;line-height:1.65'>{overview}</div>",
-            unsafe_allow_html=True,
-        )
-
-    if data.get("backdrop_url"):
-        st.markdown(
-            "<div style='margin-top:24px;border-radius:12px;overflow:hidden'>",
-            unsafe_allow_html=True,
-        )
-        st.image(data["backdrop_url"], use_column_width=True)
+        st.markdown(f"<div style='color:#c8c4be;font-size:0.95rem;line-height:1.65'>{overview}</div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top:16px'>", unsafe_allow_html=True)
+        wl_label = "✅ In Watchlist" if in_watchlist(tmdb_id) else "🔖 Add to Watchlist"
+        if st.button(wl_label, key="wl_toggle"):
+            if in_watchlist(tmdb_id): remove_from_watchlist(tmdb_id)
+            else: add_to_watchlist(tmdb_id, title, data.get("poster_url"), genre_str)
+            st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.divider()
+    if data.get("backdrop_url"):
+        st.image(data["backdrop_url"], use_column_width=True)
 
-    # ── TABS: Recommendations | Rate & Review ──
+    st.divider()
     tab1, tab2 = st.tabs(["✅ Recommendations", "⭐ Rate & Review"])
 
-    # ── TAB 1: Recommendations ──
     with tab1:
         title_str = (data.get("title") or "").strip()
         if title_str:
-            bundle, err2 = api_get_json(
-                "/movie/search",
-                params={"query": title_str, "tfidf_top_n": 12, "genre_limit": 12},
-            )
+            bundle, err2 = api_get_json("/movie/search", params={"query": title_str, "tfidf_top_n": 12, "genre_limit": 12})
             if not err2 and bundle:
-                st.markdown(
-                    "<div style='font-family:Playfair Display,serif;font-size:1.15rem;"
-                    "color:#e8b84b;margin-bottom:12px'>🔎 Similar Movies</div>",
-                    unsafe_allow_html=True,
-                )
-                poster_grid(
-                    to_cards_from_tfidf_items(bundle.get("tfidf_recommendations")),
-                    cols=grid_cols,
-                    key_prefix="tfidf",
-                    show_rating=True,
-                )
-                st.markdown(
-                    "<div style='font-family:Playfair Display,serif;font-size:1.15rem;"
-                    "color:#e8b84b;margin:20px 0 12px'>🎭 More in Genre</div>",
-                    unsafe_allow_html=True,
-                )
-                poster_grid(
-                    bundle.get("genre_recommendations", []),
-                    cols=grid_cols,
-                    key_prefix="genre",
-                    show_rating=True,
-                )
+                st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.1rem;color:#e8b84b;margin-bottom:12px'>🔎 Similar Movies</div>", unsafe_allow_html=True)
+                poster_grid(to_cards_from_tfidf(bundle.get("tfidf_recommendations")), cols=grid_cols, key_prefix="tfidf", show_rating=True)
+                st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.1rem;color:#e8b84b;margin:20px 0 12px'>🎭 More in Genre</div>", unsafe_allow_html=True)
+                poster_grid(bundle.get("genre_recommendations",[]), cols=grid_cols, key_prefix="genre", show_rating=True)
             else:
-                genre_only, err3 = api_get_json(
-                    "/recommend/genre", params={"tmdb_id": tmdb_id, "limit": 18}
-                )
+                genre_only, err3 = api_get_json("/recommend/genre", params={"tmdb_id": tmdb_id, "limit": 18})
                 if not err3 and genre_only:
                     poster_grid(genre_only, cols=grid_cols, key_prefix="genre_fb", show_rating=True)
                 else:
                     st.warning("No recommendations available right now.")
 
-    # ── TAB 2: Rate & Review ──
     with tab2:
         col_rate, col_review = st.columns([1, 1.6], gap="large")
 
         with col_rate:
-            st.markdown(
-                "<div style='font-family:Playfair Display,serif;font-size:1.1rem;"
-                "color:#f0ece4;margin-bottom:12px'>Your Rating</div>",
-                unsafe_allow_html=True,
-            )
-
-            current_rating = st.session_state.user_ratings.get(tmdb_id, 0.0)
-
-            user_score = st.slider(
-                "Rate this movie",
-                min_value=0.0,
-                max_value=5.0,
-                value=float(current_rating),
-                step=0.5,
-                label_visibility="collapsed",
-            )
-
-            # Live star preview
-            filled = int(user_score)
-            half = 1 if (user_score - filled) == 0.5 else 0
-            empty = 5 - filled - half
-            star_preview = "★" * filled + ("½" if half else "") + "☆" * empty
-            st.markdown(
-                f"<div style='color:#f5c518;font-size:1.8rem;letter-spacing:3px;"
-                f"margin:8px 0'>{star_preview}</div>"
-                f"<div style='color:#7a7590;font-size:0.85rem'>{user_score}/5.0</div>",
-                unsafe_allow_html=True,
-            )
-
+            st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.1rem;color:#f0ece4;margin-bottom:12px'>Your Rating</div>", unsafe_allow_html=True)
+            cur = float(st.session_state.user_ratings.get(tmdb_id, 0.0))
+            user_score = st.slider("Rate", 0.0, 5.0, cur, 0.5, label_visibility="collapsed")
+            filled = int(user_score); half = 1 if (user_score-filled)==0.5 else 0; empty = 5-filled-half
+            st.markdown(f"<div style='color:#f5c518;font-size:1.8rem;letter-spacing:3px;margin:8px 0'>{'★'*filled}{'½' if half else ''}{'☆'*empty}</div><div style='color:#7a7590;font-size:0.85rem'>{user_score}/5.0</div>", unsafe_allow_html=True)
             if st.button("💾 Save Rating", use_container_width=True):
                 st.session_state.user_ratings[tmdb_id] = user_score
-                st.success(f"Rating saved: {user_score}/5 ⭐")
-
-            # TMDB rating comparison
+                st.success(f"Saved: {user_score}/5 ⭐")
             if vote_avg:
-                st.markdown(
-                    f"<div style='margin-top:16px;padding:12px;background:#1a1a26;"
-                    f"border-radius:10px;border:1px solid rgba(255,255,255,0.06)'>"
-                    f"<div style='color:#7a7590;font-size:0.75rem;text-transform:uppercase;"
-                    f"letter-spacing:1px'>TMDB Average</div>"
-                    f"<div style='color:#f5c518;font-size:1.4rem;font-weight:600'>{vote_avg:.1f}/10</div>"
-                    f"<div style='color:#7a7590;font-size:0.78rem'>{vote_cnt:,} votes</div>"
-                    f"</div>",
-                    unsafe_allow_html=True,
-                )
+                st.markdown(f"<div style='margin-top:16px;padding:12px;background:#1a1a26;border-radius:10px;border:1px solid rgba(255,255,255,0.06)'><div style='color:#7a7590;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px'>TMDB Average</div><div style='color:#f5c518;font-size:1.4rem;font-weight:600'>{vote_avg:.1f}/10</div><div style='color:#7a7590;font-size:0.78rem'>{vote_cnt:,} votes</div></div>", unsafe_allow_html=True)
 
         with col_review:
-            st.markdown(
-                "<div style='font-family:Playfair Display,serif;font-size:1.1rem;"
-                "color:#f0ece4;margin-bottom:12px'>Write a Review</div>",
-                unsafe_allow_html=True,
-            )
-
-            reviewer_name = st.text_input("Your name", placeholder="Enter your name", key=f"name_{tmdb_id}")
-            review_stars = st.select_slider(
-                "Review rating",
-                options=[1, 2, 3, 4, 5],
-                value=3,
-                format_func=lambda x: "★" * x + "☆" * (5 - x),
-                key=f"rev_stars_{tmdb_id}",
-            )
-            review_text = st.text_area(
-                "Your review",
-                placeholder="Share your thoughts about this movie...",
-                height=110,
-                key=f"rev_text_{tmdb_id}",
-            )
-
-            if st.button("📝 Submit Review", use_container_width=True, key=f"submit_{tmdb_id}"):
-                if not reviewer_name.strip():
-                    st.warning("Please enter your name.")
-                elif not review_text.strip():
-                    st.warning("Please write something in your review.")
+            st.markdown("<div style='font-family:Playfair Display,serif;font-size:1.1rem;color:#f0ece4;margin-bottom:12px'>Write a Review</div>", unsafe_allow_html=True)
+            rev_name  = st.text_input("Your name", value=st.session_state.username, key=f"rname_{tmdb_id}")
+            rev_stars = st.select_slider("Stars", [1,2,3,4,5], value=3, format_func=lambda x: "★"*x+"☆"*(5-x), key=f"rstars_{tmdb_id}")
+            rev_text  = st.text_area("Review", placeholder="Share your thoughts...", height=110, key=f"rtext_{tmdb_id}")
+            if st.button("📝 Submit Review", use_container_width=True, key=f"rsub_{tmdb_id}"):
+                if not rev_name.strip():
+                    st.warning("Enter your name.")
+                elif not rev_text.strip():
+                    st.warning("Write something.")
                 else:
-                    if tmdb_id not in st.session_state.reviews:
-                        st.session_state.reviews[tmdb_id] = []
-                    st.session_state.reviews[tmdb_id].append({
-                        "name": reviewer_name.strip(),
-                        "rating": review_stars,
-                        "text": review_text.strip(),
-                        "date": datetime.now().strftime("%b %d, %Y"),
-                    })
+                    st.session_state.reviews.setdefault(tmdb_id,[]).append({"name": rev_name.strip(),"rating": rev_stars,"text": rev_text.strip(),"date": datetime.now().strftime("%b %d, %Y")})
                     st.success("Review submitted! 🎉")
                     st.rerun()
 
-        # ── Existing reviews for this movie ──
         movie_reviews = st.session_state.reviews.get(tmdb_id, [])
         if movie_reviews:
             st.markdown("---")
-            st.markdown(
-                f"<div style='font-family:Playfair Display,serif;font-size:1.1rem;"
-                f"color:#f0ece4;margin-bottom:12px'>"
-                f"Community Reviews <span style='color:#7a7590;font-size:0.85rem'>"
-                f"({len(movie_reviews)})</span></div>",
-                unsafe_allow_html=True,
-            )
-            # Summary
-            avg_user = sum(r["rating"] for r in movie_reviews) / len(movie_reviews)
-            st.markdown(
-                f"<div style='color:#f5c518;font-size:1.1rem;margin-bottom:12px'>"
-                f"{'★'*round(avg_user)}{'☆'*(5-round(avg_user))} "
-                f"<span style='color:#7a7590;font-size:0.85rem'>"
-                f"{avg_user:.1f} avg from {len(movie_reviews)} review(s)</span></div>",
-                unsafe_allow_html=True,
-            )
-
+            avg_u = sum(r["rating"] for r in movie_reviews) / len(movie_reviews)
+            st.markdown(f"<div style='color:#f5c518;font-size:1rem;margin-bottom:12px'>{'★'*round(avg_u)}{'☆'*(5-round(avg_u))} <span style='color:#7a7590;font-size:0.85rem'>{avg_u:.1f} avg · {len(movie_reviews)} review(s)</span></div>", unsafe_allow_html=True)
             for rev in reversed(movie_reviews):
-                stars_filled = "★" * rev["rating"] + "☆" * (5 - rev["rating"])
                 st.markdown(
-                    f"<div class='review-card'>"
-                    f"<div style='display:flex;justify-content:space-between;align-items:center'>"
-                    f"<span class='reviewer-name'>{rev['name']}</span>"
-                    f"<span style='color:#f5c518;font-size:0.9rem'>{stars_filled}</span>"
-                    f"</div>"
-                    f"<div class='review-date'>{rev['date']}</div>"
-                    f"<div class='review-text'>{rev['text']}</div>"
-                    f"</div>",
+                    f"<div class='review-card'><div style='display:flex;justify-content:space-between;align-items:center'>"
+                    f"<span class='reviewer-name'>{rev['name']}</span><span style='color:#f5c518'>{'★'*rev['rating']}{'☆'*(5-rev['rating'])}</span></div>"
+                    f"<div class='review-date'>{rev['date']}</div><div class='review-text'>{rev['text']}</div></div>",
                     unsafe_allow_html=True,
                 )
         else:
-            st.markdown(
-                "<div style='color:#7a7590;font-size:0.88rem;margin-top:16px'>"
-                "No reviews yet for this movie. Be the first! 🎬</div>",
-                unsafe_allow_html=True,
-            )
+            st.markdown("<div style='color:#7a7590;font-size:0.88rem;margin-top:16px'>No reviews yet. Be the first! 🎬</div>", unsafe_allow_html=True)
