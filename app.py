@@ -21,7 +21,7 @@ st.set_page_config(page_title="CineScope”, page_icon="🎬”, layout="wide”
 # =============================
 
 LANG_STRINGS = {
-"English”: {
+"English": {
 "site_sub”: "Discover · Rate · Review · Watchlist”,
 "search_placeholder”: "🔍  avengers, batman, love…”,
 "sign_in”: "Sign In”,
