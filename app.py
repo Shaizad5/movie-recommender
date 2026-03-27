@@ -9,7 +9,7 @@ import random
 
 # =============================
 
-API_BASE = "https://movie-recommender-1-eopi.onrender.com”
+API_BASE = "https://movie-recommender-1-eopi.onrender.com/home?category=trending&limit=1"
 TMDB_IMG = "https://image.tmdb.org/t/p/w500”
 
 st.set_page_config(page_title="CineScope”, page_icon="🎬”, layout="wide”)
