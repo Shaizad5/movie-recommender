@@ -1,7 +1,8 @@
 import requests
 import streamlit as st
 from datetime import datetime
-import random
+import json
+import os
 
 # =============================
 # CONFIG
@@ -13,6 +14,48 @@ TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 st.set_page_config(page_title="CineScope", page_icon="\U0001f3ac", layout="wide")
 
 # =============================
+# PERSISTENT DATA HELPERS
+# =============================
+
+USERS_FILE = "users.json"
+DATA_FILE  = "userdata.json"
+
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "r") as f:
+            return json.load(f)
+    default = {"sana": "1234", "demo": "demo", "admin": "admin"}
+    save_users(default)
+    return default
+
+def save_users(users):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f)
+
+def load_userdata(username):
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            all_data = json.load(f)
+        return all_data.get(username, {})
+    return {}
+
+def save_userdata(username, watchlist, user_ratings, reviews, movie_title_cache):
+    all_data = {}
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            all_data = json.load(f)
+    all_data[username] = {
+        "watchlist": watchlist,
+        "user_ratings": {str(k): v for k, v in user_ratings.items()},
+        "reviews": {str(k): v for k, v in reviews.items()},
+        "movie_title_cache": {str(k): v for k, v in movie_title_cache.items()},
+    }
+    with open(DATA_FILE, "w") as f:
+        json.dump(all_data, f)
+
+USERS = load_users()
+
+# =============================
 # MULTILINGUAL STRINGS
 # =============================
 
@@ -20,107 +63,66 @@ LANG_STRINGS = {
 "English": {
 "site_sub": "Discover \u00b7 Rate \u00b7 Review \u00b7 Watchlist",
 "search_placeholder": "\U0001f50d  avengers, batman, love\u2026",
-"sign_in": "Sign In",
-"sign_up": "Sign Up",
-"username": "Username",
-"password": "Password",
-"confirm_password": "Confirm Password",
-"sign_in_btn": "Sign In \u2192",
-"create_account": "Create Account \u2192",
-"demo_hint": "Demo \u2192 demo / demo",
-"home": "Home",
-"mood_pick": "Mood Pick",
-"watchlist": "Watchlist",
-"analytics": "Analytics",
-"profile": "Profile",
-"sign_out": "\U0001f6aa Sign Out",
-"home_feed": "Home Feed",
-"category": "Category",
-"grid_cols": "Grid columns",
-"activity": "Activity",
-"open": "Open \u2192",
-"back_home": "\u2190 Back to Home",
-"add_watchlist": "\U0001f516 Add to Watchlist",
-"in_watchlist": "\u2705 In Watchlist",
-"recommendations": "\u2705 Recommendations",
-"rate_review": "\u2b50 Rate & Review",
-"your_rating": "Your Rating",
-"save_rating": "\U0001f4be Save Rating",
-"write_review": "Write a Review",
-"your_name": "Your name",
-"stars": "Stars",
+"sign_in": "Sign In", "sign_up": "Sign Up", "username": "Username",
+"password": "Password", "confirm_password": "Confirm Password",
+"sign_in_btn": "Sign In \u2192", "create_account": "Create Account \u2192",
+"demo_hint": "Demo \u2192 demo / demo", "home": "Home", "mood_pick": "Mood Pick",
+"watchlist": "Watchlist", "analytics": "Analytics", "profile": "Profile",
+"sign_out": "\U0001f6aa Sign Out", "home_feed": "Home Feed", "category": "Category",
+"grid_cols": "Grid columns", "activity": "Activity", "open": "Open \u2192",
+"back_home": "\u2190 Back to Home", "add_watchlist": "\U0001f516 Add to Watchlist",
+"in_watchlist": "\u2705 In Watchlist", "recommendations": "\u2705 Recommendations",
+"rate_review": "\u2b50 Rate & Review", "your_rating": "Your Rating",
+"save_rating": "\U0001f4be Save Rating", "write_review": "Write a Review",
+"your_name": "Your name", "stars": "Stars",
 "review_placeholder": "Share your thoughts\u2026",
 "submit_review": "\U0001f4dd Submit Review",
 "no_reviews": "No reviews yet. Be the first! \U0001f3ac",
-"similar_movies": "\U0001f50e Similar Movies",
-"more_genre": "\U0001f3ad More in Genre",
+"similar_movies": "\U0001f50e Similar Movies", "more_genre": "\U0001f3ad More in Genre",
 "mood_title": "\U0001f3af Mood-Based Recommender",
 "mood_subtitle": "How are you feeling today? We'll find the perfect movies.",
-"pick": "Pick",
-"watchlist_title": "\U0001f516 My Watchlist",
+"pick": "Pick", "watchlist_title": "\U0001f516 My Watchlist",
 "watchlist_empty": "Watchlist is empty",
 "watchlist_hint": "Open any movie \u2192 click \U0001f516 Add to Watchlist",
 "clear_watchlist": "\U0001f5d1\ufe0f Clear Watchlist",
-"view": "View",
-"grid": "Grid",
-"list": "List",
-"added": "Added",
+"view": "View", "grid": "Grid", "list": "List", "added": "Added",
 "analytics_title": "\U0001f4ca Analytics Dashboard",
-"movies_rated": "Movies Rated",
-"reviews": "Reviews",
-"avg_rating": "Avg Rating",
-"ratings_dist": "\u2b50 Ratings Distribution",
-"genre_breakdown": "\U0001f3ad Genre Breakdown",
+"movies_rated": "Movies Rated", "reviews": "Reviews", "avg_rating": "Avg Rating",
+"ratings_dist": "\u2b50 Ratings Distribution", "genre_breakdown": "\U0001f3ad Genre Breakdown",
 "rate_to_see": "Rate movies to see your chart",
 "add_to_see": "Add movies to see genre breakdown",
-"trending": "\U0001f4c8 Trending Movies",
-"simulated": "Simulated popularity trend",
-"recent_reviews": "\U0001f4dd Recent Reviews",
-"no_reviews_yet": "No reviews yet.",
-"profile_title": "\U0001f464 My Profile",
-"member_since": "Member since",
-"rated": "Rated",
-"top_rated": "\U0001f3c6 Top Rated",
+"trending": "\U0001f4c8 Trending Movies", "simulated": "Simulated popularity trend",
+"recent_reviews": "\U0001f4dd Recent Reviews", "no_reviews_yet": "No reviews yet.",
+"profile_title": "\U0001f464 My Profile", "member_since": "Member since",
+"rated": "Rated", "top_rated": "\U0001f3c6 Top Rated",
 "no_ratings": "Rate movies to build your profile!",
 "wrong_credentials": "Wrong username or password.",
-"enter_username": "Enter a username.",
-"username_taken": "Username taken.",
+"enter_username": "Enter a username.", "username_taken": "Username already taken.",
 "passwords_no_match": "Passwords don't match.",
-"password_short": "Password too short.",
-"enter_name": "Enter your name.",
-"write_something": "Write something.",
-"review_submitted": "Review submitted! \U0001f389",
-"rating_saved": "Saved",
-"min": "min",
-"votes": "votes",
-"language": "Language",
-"search_results": "results for",
-"movie_explorer": "Movie Explorer",
+"password_short": "Password too short (min 3 chars).",
+"enter_name": "Enter your name.", "write_something": "Write something.",
+"review_submitted": "Review submitted! \U0001f389", "rating_saved": "Saved",
+"min": "min", "votes": "votes", "language": "Language",
+"search_results": "results for", "movie_explorer": "Movie Explorer",
 "no_movie_selected": "No movie selected.",
 },
-"hindi": {
+"Hindi": {
 "site_sub": "\u0916\u094b\u091c\u0947\u0902 \u00b7 \u0930\u0947\u091f \u0915\u0930\u0947\u0902 \u00b7 \u0938\u092e\u0940\u0915\u094d\u0937\u093e \u0915\u0930\u0947\u0902 \u00b7 \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f",
 "search_placeholder": "\U0001f50d  \u0905\u0935\u0947\u0902\u091c\u0930\u094d\u0938, \u092c\u0948\u091f\u092e\u0948\u0928\u2026",
-"sign_in": "\u0938\u093e\u0907\u0928 \u0907\u0928",
-"sign_up": "\u0938\u093e\u0907\u0928 \u0905\u092a",
+"sign_in": "\u0938\u093e\u0907\u0928 \u0907\u0928", "sign_up": "\u0938\u093e\u0907\u0928 \u0905\u092a",
 "username": "\u0909\u092a\u092f\u094b\u0917\u0915\u0930\u094d\u0924\u093e \u0928\u093e\u092e",
 "password": "\u092a\u093e\u0938\u0935\u0930\u094d\u0921",
 "confirm_password": "\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0915\u0940 \u092a\u0941\u0937\u094d\u091f\u093f \u0915\u0930\u0947\u0902",
 "sign_in_btn": "\u0938\u093e\u0907\u0928 \u0907\u0928 \u2192",
 "create_account": "\u0916\u093e\u0924\u093e \u092c\u0928\u093e\u090f\u0902 \u2192",
 "demo_hint": "\u0921\u0947\u092e\u094b \u2192 demo / demo",
-"home": "\u0939\u094b\u092e",
-"mood_pick": "\u092e\u0942\u0921 \u092a\u093f\u0915",
-"watchlist": "\u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f",
-"analytics": "\u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923",
+"home": "\u0939\u094b\u092e", "mood_pick": "\u092e\u0942\u0921 \u092a\u093f\u0915",
+"watchlist": "\u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f", "analytics": "\u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923",
 "profile": "\u092a\u094d\u0930\u094b\u092b\u093e\u0907\u0932",
 "sign_out": "\U0001f6aa \u0938\u093e\u0907\u0928 \u0906\u0909\u091f",
-"home_feed": "\u0939\u094b\u092e \u092b\u093c\u0940\u0921",
-"category": "\u0936\u094d\u0930\u0947\u0923\u0940",
-"grid_cols": "\u0917\u094d\u0930\u093f\u0921 \u0915\u0949\u0932\u092e",
-"activity": "\u0917\u0924\u093f\u0935\u093f\u0927\u093f",
-"open": "\u0916\u094b\u0932\u0947\u0902 \u2192",
-"back_home": "\u2190 \u0939\u094b\u092e \u092a\u0930 \u0935\u093e\u092a\u0938",
+"home_feed": "\u0939\u094b\u092e \u092b\u093c\u0940\u0921", "category": "\u0936\u094d\u0930\u0947\u0923\u0940",
+"grid_cols": "\u0917\u094d\u0930\u093f\u0921 \u0915\u0949\u0932\u092e", "activity": "\u0917\u0924\u093f\u0935\u093f\u0927\u093f",
+"open": "\u0916\u094b\u0932\u0947\u0902 \u2192", "back_home": "\u2190 \u0939\u094b\u092e \u092a\u0930 \u0935\u093e\u092a\u0938",
 "add_watchlist": "\U0001f516 \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902",
 "in_watchlist": "\u2705 \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f \u092e\u0947\u0902 \u0939\u0948",
 "recommendations": "\u2705 \u0938\u093f\u092b\u093e\u0930\u093f\u0936\u0947\u0902",
@@ -128,8 +130,7 @@ LANG_STRINGS = {
 "your_rating": "\u0906\u092a\u0915\u0940 \u0930\u0947\u091f\u093f\u0902\u0917",
 "save_rating": "\U0001f4be \u0930\u0947\u091f\u093f\u0902\u0917 \u0938\u0939\u0947\u091c\u0947\u0902",
 "write_review": "\u0938\u092e\u0940\u0915\u094d\u0937\u093e \u0932\u093f\u0916\u0947\u0902",
-"your_name": "\u0906\u092a\u0915\u093e \u0928\u093e\u092e",
-"stars": "\u0924\u093e\u0930\u0947",
+"your_name": "\u0906\u092a\u0915\u093e \u0928\u093e\u092e", "stars": "\u0924\u093e\u0930\u0947",
 "review_placeholder": "\u0905\u092a\u0928\u0947 \u0935\u093f\u091a\u093e\u0930 \u0938\u093e\u091d\u093e \u0915\u0930\u0947\u0902\u2026",
 "submit_review": "\U0001f4dd \u0938\u092e\u0940\u0915\u094d\u0937\u093e \u091c\u092e\u093e \u0915\u0930\u0947\u0902",
 "no_reviews": "\u0905\u092d\u0940 \u0924\u0915 \u0915\u094b\u0908 \u0938\u092e\u0940\u0915\u094d\u0937\u093e \u0928\u0939\u0940\u0902\u0964",
@@ -137,19 +138,15 @@ LANG_STRINGS = {
 "more_genre": "\U0001f3ad \u0907\u0938 \u0936\u0948\u0932\u0940 \u092e\u0947\u0902 \u0914\u0930",
 "mood_title": "\U0001f3af \u092e\u0942\u0921 \u0906\u0927\u093e\u0930\u093f\u0924 \u0938\u093f\u092b\u093e\u0930\u093f\u0936\u0915\u0930\u094d\u0924\u093e",
 "mood_subtitle": "\u0906\u091c \u0906\u092a \u0915\u0948\u0938\u093e \u092e\u0939\u0938\u0942\u0938 \u0915\u0930 \u0930\u0939\u0947 \u0939\u0948\u0902?",
-"pick": "\u091a\u0941\u0928\u0947\u0902",
-"watchlist_title": "\U0001f516 \u092e\u0947\u0930\u0940 \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f",
+"pick": "\u091a\u0941\u0928\u0947\u0902", "watchlist_title": "\U0001f516 \u092e\u0947\u0930\u0940 \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f",
 "watchlist_empty": "\u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f \u0916\u093e\u0932\u0940 \u0939\u0948",
 "watchlist_hint": "\u0915\u094b\u0908 \u092b\u093f\u0932\u094d\u092e \u0916\u094b\u0932\u0947\u0902 \u2192 \U0001f516 \u092a\u0930 \u0915\u094d\u0932\u093f\u0915 \u0915\u0930\u0947\u0902",
 "clear_watchlist": "\U0001f5d1\ufe0f \u0935\u0949\u091a\u0932\u093f\u0938\u094d\u091f \u0938\u093e\u092b\u093c \u0915\u0930\u0947\u0902",
-"view": "\u0926\u0943\u0936\u094d\u092f",
-"grid": "\u0917\u094d\u0930\u093f\u0921",
-"list": "\u0938\u0942\u091a\u0940",
+"view": "\u0926\u0943\u0936\u094d\u092f", "grid": "\u0917\u094d\u0930\u093f\u0921", "list": "\u0938\u0942\u091a\u0940",
 "added": "\u091c\u094b\u0921\u093c\u093e \u0917\u092f\u093e",
 "analytics_title": "\U0001f4ca \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921",
 "movies_rated": "\u0930\u0947\u091f \u0915\u0940 \u0917\u0908 \u092b\u093f\u0932\u094d\u092e\u0947\u0902",
-"reviews": "\u0938\u092e\u0940\u0915\u094d\u0937\u093e\u090f\u0902",
-"avg_rating": "\u0914\u0938\u0924 \u0930\u0947\u091f\u093f\u0902\u0917",
+"reviews": "\u0938\u092e\u0940\u0915\u094d\u0937\u093e\u090f\u0902", "avg_rating": "\u0914\u0938\u0924 \u0930\u0947\u091f\u093f\u0902\u0917",
 "ratings_dist": "\u2b50 \u0930\u0947\u091f\u093f\u0902\u0917 \u0935\u093f\u0924\u0930\u0923",
 "genre_breakdown": "\U0001f3ad \u0936\u0948\u0932\u0940 \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923",
 "rate_to_see": "\u091a\u093e\u0930\u094d\u091f \u0926\u0947\u0916\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u092b\u093f\u0932\u094d\u092e\u0947\u0902 \u0930\u0947\u091f \u0915\u0930\u0947\u0902",
@@ -159,8 +156,7 @@ LANG_STRINGS = {
 "recent_reviews": "\U0001f4dd \u0939\u093e\u0932\u093f\u092f\u093e \u0938\u092e\u0940\u0915\u094d\u0937\u093e\u090f\u0902",
 "no_reviews_yet": "\u0905\u092d\u0940 \u0924\u0915 \u0915\u094b\u0908 \u0938\u092e\u0940\u0915\u094d\u0937\u093e \u0928\u0939\u0940\u0902\u0964",
 "profile_title": "\U0001f464 \u092e\u0947\u0930\u0940 \u092a\u094d\u0930\u094b\u092b\u093e\u0907\u0932",
-"member_since": "\u0938\u0926\u0938\u094d\u092f \u092c\u0928\u0947",
-"rated": "\u0930\u0947\u091f \u0915\u093f\u092f\u093e",
+"member_since": "\u0938\u0926\u0938\u094d\u092f \u092c\u0928\u0947", "rated": "\u0930\u0947\u091f \u0915\u093f\u092f\u093e",
 "top_rated": "\U0001f3c6 \u0938\u0930\u094d\u0935\u0936\u094d\u0930\u0947\u0937\u094d\u0920 \u0930\u0947\u091f\u0947\u0921",
 "no_ratings": "\u0905\u092a\u0928\u0940 \u092a\u094d\u0930\u094b\u092b\u093e\u0907\u0932 \u092c\u0928\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u092b\u093f\u0932\u094d\u092e\u0947\u0902 \u0930\u0947\u091f \u0915\u0930\u0947\u0902!",
 "wrong_credentials": "\u0917\u0932\u0924 \u0909\u092a\u092f\u094b\u0917\u0915\u0930\u094d\u0924\u093e \u0928\u093e\u092e \u092f\u093e \u092a\u093e\u0938\u0935\u0930\u094d\u0921\u0964",
@@ -172,20 +168,16 @@ LANG_STRINGS = {
 "write_something": "\u0915\u0941\u091b \u0932\u093f\u0916\u0947\u0902\u0964",
 "review_submitted": "\u0938\u092e\u0940\u0915\u094d\u0937\u093e \u091c\u092e\u093e \u0915\u0940 \u0917\u0908! \U0001f389",
 "rating_saved": "\u0938\u0939\u0947\u091c\u093e \u0917\u092f\u093e",
-"min": "\u092e\u093f\u0928\u091f",
-"votes": "\u0935\u094b\u091f",
-"language": "\u092d\u093e\u0937\u093e",
+"min": "\u092e\u093f\u0928\u091f", "votes": "\u0935\u094b\u091f", "language": "\u092d\u093e\u0937\u093e",
 "search_results": "\u092a\u0930\u093f\u0923\u093e\u092e",
 "movie_explorer": "\u092e\u0942\u0935\u0940 \u090f\u0915\u094d\u0938\u092a\u094d\u0932\u094b\u0930\u0930",
 "no_movie_selected": "\u0915\u094b\u0908 \u092b\u093f\u0932\u094d\u092e \u0928\u0939\u0940\u0902 \u091a\u0941\u0928\u0940 \u0917\u0908\u0964",
 },
 }
 
-# Add Telugu and Arabic as aliases pointing to English for brevity
-LANG_STRINGS["\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41"] = LANG_STRINGS["English"]
-LANG_STRINGS["\u0627\u0644\u0639\u0631\u0628\u064a\u0629"] = LANG_STRINGS["English"]
-
-LANGUAGE_DISPLAY = ["English", "hindi", "\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"]
+LANG_STRINGS["Telugu"] = LANG_STRINGS["English"]
+LANG_STRINGS["Arabic"] = LANG_STRINGS["English"]
+LANGUAGE_DISPLAY = ["English", "Hindi", "Telugu", "Arabic"]
 
 # =============================
 # STYLES
@@ -223,7 +215,6 @@ h1,h2,h3 { font-family: 'Playfair Display', serif !important; color: var(--text)
 .mood-emoji { font-size:2.6rem;margin-bottom:10px; }
 .mood-label { font-family:'Playfair Display',serif;font-size:1rem;color:var(--text); }
 .mood-desc { color:var(--muted);font-size:0.76rem;margin-top:4px; }
-.mood-selected { border-color:#e8b84b !important; background: rgba(232,184,75,0.07) !important; }
 .wl-title { font-size:0.92rem;color:var(--text);font-weight:500; }
 .wl-meta { color:var(--muted);font-size:0.78rem;margin-top:2px; }
 .profile-avatar { width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#e8b84b,#c0392b);display:flex;align-items:center;justify-content:center;font-size:2rem;font-family:'Playfair Display',serif;color:#0a0a0f;font-weight:700; }
@@ -235,7 +226,6 @@ h1,h2,h3 { font-family: 'Playfair Display', serif !important; color: var(--text)
 .stButton > button:hover { border-color:var(--accent) !important;color:var(--accent) !important; }
 hr { border-color:var(--border) !important; }
 .login-wrap { max-width:420px;margin:60px auto;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px; }
-.profile-stat-card { background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -248,8 +238,8 @@ defaults = {
     "reviews": {}, "user_ratings": {},
     "watchlist": [], "logged_in": False,
     "username": "", "mood_selected": None,
-    "language": "English",
-    "movie_title_cache": {},
+    "language": "English", "movie_title_cache": {},
+    "data_loaded": False,
 }
 for k, v in defaults.items():
     if k not in st.session_state:
@@ -259,7 +249,15 @@ def T(key):
     lang = st.session_state.get("language", "English")
     return LANG_STRINGS.get(lang, LANG_STRINGS["English"]).get(key, LANG_STRINGS["English"].get(key, key))
 
-USERS = {"sana": "1234", "demo": "demo", "admin": "admin"}
+def flush():
+    if st.session_state.username:
+        save_userdata(
+            st.session_state.username,
+            st.session_state.watchlist,
+            st.session_state.user_ratings,
+            st.session_state.reviews,
+            st.session_state.movie_title_cache,
+        )
 
 qp_view = st.query_params.get("view")
 qp_id   = st.query_params.get("id")
@@ -273,6 +271,7 @@ if qp_id:
         pass
 
 def goto(view, tmdb_id=None):
+    flush()
     st.session_state.view = view
     st.query_params["view"] = view
     if tmdb_id:
@@ -287,11 +286,13 @@ def goto(view, tmdb_id=None):
 # =============================
 
 if not st.session_state.logged_in:
-    lang_col1, lang_col2 = st.columns([3,1])
+    lang_col1, lang_col2 = st.columns([3, 1])
     with lang_col2:
-        selected_lang = st.selectbox("Lang", LANGUAGE_DISPLAY, index=LANGUAGE_DISPLAY.index(st.session_state.language), label_visibility="collapsed")
-        if selected_lang != st.session_state.language:
-            st.session_state.language = selected_lang
+        sel_lang = st.selectbox("Lang", LANGUAGE_DISPLAY,
+                                index=LANGUAGE_DISPLAY.index(st.session_state.language),
+                                label_visibility="collapsed")
+        if sel_lang != st.session_state.language:
+            st.session_state.language = sel_lang
             st.rerun()
 
     st.markdown("<div class='login-wrap'>", unsafe_allow_html=True)
@@ -306,9 +307,11 @@ if not st.session_state.logged_in:
         uname = st.text_input(T("username"), placeholder="e.g. demo", key="li_u")
         pwd   = st.text_input(T("password"), type="password", key="li_p")
         if st.button(T("sign_in_btn"), use_container_width=True):
-            if uname in USERS and USERS[uname] == pwd:
-                st.session_state.logged_in = True
-                st.session_state.username  = uname
+            fresh_users = load_users()
+            if uname in fresh_users and fresh_users[uname] == pwd:
+                st.session_state.logged_in   = True
+                st.session_state.username    = uname
+                st.session_state.data_loaded = False
                 st.rerun()
             else:
                 st.error(T("wrong_credentials"))
@@ -319,22 +322,38 @@ if not st.session_state.logged_in:
         np1 = st.text_input(T("password"), type="password", key="su_p1")
         np2 = st.text_input(T("confirm_password"), type="password", key="su_p2")
         if st.button(T("create_account"), use_container_width=True):
+            fresh_users = load_users()
             if not nu.strip():
                 st.warning(T("enter_username"))
-            elif nu in USERS:
+            elif nu in fresh_users:
                 st.error(T("username_taken"))
             elif np1 != np2:
                 st.error(T("passwords_no_match"))
             elif len(np1) < 3:
                 st.warning(T("password_short"))
             else:
-                USERS[nu] = np1
-                st.session_state.logged_in = True
-                st.session_state.username  = nu
+                fresh_users[nu] = np1
+                save_users(fresh_users)
+                st.session_state.logged_in   = True
+                st.session_state.username    = nu
+                st.session_state.data_loaded = False
                 st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.stop()
+
+# =============================
+# LOAD USER DATA AFTER LOGIN
+# =============================
+
+if not st.session_state.data_loaded and st.session_state.username:
+    saved = load_userdata(st.session_state.username)
+    if saved:
+        st.session_state.watchlist         = saved.get("watchlist", [])
+        st.session_state.user_ratings      = {int(k): v for k, v in saved.get("user_ratings", {}).items()}
+        st.session_state.reviews           = {int(k): v for k, v in saved.get("reviews", {}).items()}
+        st.session_state.movie_title_cache = {int(k): v for k, v in saved.get("movie_title_cache", {}).items()}
+    st.session_state.data_loaded = True
 
 # =============================
 # API HELPERS
@@ -390,9 +409,11 @@ def add_to_watchlist(tmdb_id, title, poster_url, genres=""):
             "genres": genres, "added_on": datetime.now().strftime("%b %d, %Y"),
         })
         st.session_state.movie_title_cache[tmdb_id] = title
+        flush()
 
 def remove_from_watchlist(tmdb_id):
     st.session_state.watchlist = [w for w in st.session_state.watchlist if w["tmdb_id"] != tmdb_id]
+    flush()
 
 # =============================
 # POSTER GRID
@@ -409,7 +430,7 @@ def poster_grid(cards, cols=6, key_prefix="grid", show_rating=False):
         for c in range(cols):
             if idx >= len(cards): break
             m = cards[idx]; idx += 1
-            tmdb_id = m.get("tmdb_id"); title = m.get("title","Untitled")
+            tmdb_id = m.get("tmdb_id"); title = m.get("title", "Untitled")
             poster = m.get("poster_url"); rating = m.get("vote_average") or m.get("rating")
             with colset[c]:
                 if poster:
@@ -455,12 +476,12 @@ def parse_search_to_cards(data, keyword, limit=24):
 # =============================
 
 MOODS = [
-    {"emoji": "\U0001f602", "label": "Feel-Good",   "desc": "Comedy & fun",          "genres": ["Comedy","Animation","Family"],             "queries": ["funny comedy movie","family comedy film","animated comedy"],          "color": "#f5c518"},
-    {"emoji": "\U0001f631", "label": "Thriller",     "desc": "Edge-of-seat suspense", "genres": ["Thriller","Horror","Mystery"],             "queries": ["thriller suspense movie","horror mystery film","psychological thriller"],"color": "#c0392b"},
-    {"emoji": "\u2764\ufe0f", "label": "Romantic",   "desc": "Love stories",          "genres": ["Romance","Drama"],                         "queries": ["romance love story","romantic drama film","love movie"],               "color": "#e84393"},
-    {"emoji": "\U0001f680", "label": "Adventure",    "desc": "Action & epic journeys","genres": ["Action","Adventure","Sci-Fi"],             "queries": ["action adventure movie","epic journey film","action blockbuster"],     "color": "#e8b84b"},
-    {"emoji": "\U0001f622", "label": "Emotional",    "desc": "Tear-jerkers",          "genres": ["Drama","History","War"],                   "queries": ["emotional drama film","tearjerker movie","moving drama"],              "color": "#9b59b6"},
-    {"emoji": "\U0001f9e0", "label": "Mind-Bending", "desc": "Twists & sci-fi",       "genres": ["Science Fiction","Mystery","Thriller"],    "queries": ["mind bending sci-fi","complex plot twist movie","cerebral science fiction"], "color": "#1abc9c"},
+    {"emoji": "\U0001f602", "label": "Feel-Good",   "desc": "Comedy & fun",           "genres": ["Comedy","Animation","Family"],          "queries": ["funny comedy movie","family comedy film","animated comedy"],            "color": "#f5c518"},
+    {"emoji": "\U0001f631", "label": "Thriller",     "desc": "Edge-of-seat suspense",  "genres": ["Thriller","Horror","Mystery"],          "queries": ["thriller suspense movie","horror mystery film","psychological thriller"],"color": "#c0392b"},
+    {"emoji": "\u2764\ufe0f","label": "Romantic",    "desc": "Love stories",           "genres": ["Romance","Drama"],                      "queries": ["romance love story","romantic drama film","love movie"],                "color": "#e84393"},
+    {"emoji": "\U0001f680", "label": "Adventure",    "desc": "Action & epic journeys", "genres": ["Action","Adventure","Sci-Fi"],          "queries": ["action adventure movie","epic journey film","action blockbuster"],      "color": "#e8b84b"},
+    {"emoji": "\U0001f622", "label": "Emotional",    "desc": "Tear-jerkers",           "genres": ["Drama","History","War"],                "queries": ["emotional drama film","tearjerker movie","moving drama"],               "color": "#9b59b6"},
+    {"emoji": "\U0001f9e0", "label": "Mind-Bending", "desc": "Twists & sci-fi",        "genres": ["Science Fiction","Mystery","Thriller"], "queries": ["mind bending sci-fi","complex plot twist movie","cerebral science fiction"],"color": "#1abc9c"},
 ]
 
 # =============================
@@ -479,12 +500,18 @@ with st.sidebar:
     )
     st.divider()
     st.markdown(f"<div style='color:#7a7590;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px'>\U0001f310 {T('language')}</div>", unsafe_allow_html=True)
-    selected_lang = st.selectbox("Lang", LANGUAGE_DISPLAY, index=LANGUAGE_DISPLAY.index(st.session_state.language), label_visibility="collapsed")
-    if selected_lang != st.session_state.language:
-        st.session_state.language = selected_lang
+    sel_lang = st.selectbox("Lang", LANGUAGE_DISPLAY,
+                            index=LANGUAGE_DISPLAY.index(st.session_state.language),
+                            label_visibility="collapsed")
+    if sel_lang != st.session_state.language:
+        st.session_state.language = sel_lang
         st.rerun()
     st.divider()
-    for icon, label_key, vkey in [("\U0001f3e0","home","home"),("\U0001f3af","mood_pick","mood"),("\U0001f516","watchlist","watchlist"),("\U0001f4ca","analytics","analytics"),("\U0001f464","profile","profile")]:
+    for icon, label_key, vkey in [
+        ("\U0001f3e0","home","home"), ("\U0001f3af","mood_pick","mood"),
+        ("\U0001f516","watchlist","watchlist"), ("\U0001f4ca","analytics","analytics"),
+        ("\U0001f464","profile","profile"),
+    ]:
         if st.button(f"{icon}  {T(label_key)}", key=f"nav_{vkey}", use_container_width=True):
             goto(vkey)
     st.divider()
@@ -500,8 +527,14 @@ with st.sidebar:
     )
     st.divider()
     if st.button(f"\U0001f6aa {T('sign_out')}", use_container_width=True):
-        st.session_state.logged_in = False
-        st.session_state.username = ""
+        flush()
+        st.session_state.logged_in         = False
+        st.session_state.username          = ""
+        st.session_state.data_loaded       = False
+        st.session_state.watchlist         = []
+        st.session_state.user_ratings      = {}
+        st.session_state.reviews           = {}
+        st.session_state.movie_title_cache = {}
         st.rerun()
 
 # =============================
@@ -543,7 +576,7 @@ if st.session_state.view == "profile":
             if st.session_state.user_ratings:
                 for rank, (mid, score) in enumerate(sorted(st.session_state.user_ratings.items(), key=lambda x: x[1], reverse=True), 1):
                     movie_title = st.session_state.movie_title_cache.get(mid, f"Movie ID {mid}")
-                    col_a, col_b = st.columns([5,1])
+                    col_a, col_b = st.columns([5, 1])
                     with col_a:
                         st.markdown(
                             f"<div style='display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)'>"
@@ -576,7 +609,7 @@ if st.session_state.view == "profile":
         with ptab3:
             if st.session_state.watchlist:
                 for w in st.session_state.watchlist:
-                    c1, c2, c3 = st.columns([1,5,1])
+                    c1, c2, c3 = st.columns([1, 5, 1])
                     with c1:
                         if w.get("poster_url"): st.image(w["poster_url"], width=50)
                     with c2:
@@ -626,8 +659,7 @@ elif st.session_state.view == "mood":
             )
             st.markdown("".join(f"<span class='genre-pill'>{g}</span>" for g in mood_obj["genres"]), unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
-            all_cards = []
-            seen_ids = set()
+            all_cards = []; seen_ids = set()
             with st.spinner("Finding perfect movies for your mood..."):
                 for query in mood_obj["queries"]:
                     data, err = api_get_json("/tmdb/search", params={"query": query})
@@ -665,7 +697,7 @@ elif st.session_state.view == "watchlist":
             poster_grid(st.session_state.watchlist, cols=grid_cols, key_prefix="wl_grid")
             st.divider()
             if st.button(T("clear_watchlist")):
-                st.session_state.watchlist = []; st.rerun()
+                st.session_state.watchlist = []; flush(); st.rerun()
         else:
             for i, w in enumerate(st.session_state.watchlist):
                 c1, c2, c3 = st.columns([1, 5, 1])
@@ -682,7 +714,7 @@ elif st.session_state.view == "watchlist":
                 st.markdown("<hr style='margin:6px 0;border-color:rgba(255,255,255,0.05)'>", unsafe_allow_html=True)
             st.divider()
             if st.button(T("clear_watchlist")):
-                st.session_state.watchlist = []; st.rerun()
+                st.session_state.watchlist = []; flush(); st.rerun()
 
 # ==========================================================
 # VIEW: ANALYTICS
@@ -735,7 +767,7 @@ elif st.session_state.view == "analytics":
     st.markdown(f"#### {T('trending')}")
     import pandas as pd, numpy as np
     titles = ["Inception","Interstellar","Dark Knight","Avengers","Parasite"]
-    days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    days   = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
     np.random.seed(42)
     df_trend = pd.DataFrame(
         {t: np.clip(np.cumsum(np.random.randint(-3,8,7)) + 65, 40, 100) for t in titles},
@@ -887,6 +919,7 @@ elif st.session_state.view == "details":
             st.markdown(f"<div style='color:#f5c518;font-size:1.8rem;letter-spacing:3px;margin:8px 0'>{'★'*filled}{'½' if half else ''}{'☆'*empty}</div><div style='color:#7a7590;font-size:0.85rem'>{user_score}/5.0</div>", unsafe_allow_html=True)
             if st.button(T("save_rating"), use_container_width=True):
                 st.session_state.user_ratings[tmdb_id] = user_score
+                flush()
                 st.success(f"{T('rating_saved')}: {user_score}/5 ⭐")
             if vote_avg:
                 st.markdown(f"<div style='margin-top:16px;padding:12px;background:#1a1a26;border-radius:10px;border:1px solid rgba(255,255,255,0.06)'><div style='color:#7a7590;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px'>TMDB Average</div><div style='color:#f5c518;font-size:1.4rem;font-weight:600'>{vote_avg:.1f}/10</div><div style='color:#7a7590;font-size:0.78rem'>{vote_cnt:,} {T('votes')}</div></div>", unsafe_allow_html=True)
@@ -905,6 +938,7 @@ elif st.session_state.view == "details":
                         "name": rev_name.strip(), "rating": rev_stars,
                         "text": rev_text.strip(), "date": datetime.now().strftime("%b %d, %Y")
                     })
+                    flush()
                     st.success(T("review_submitted"))
                     st.rerun()
 
