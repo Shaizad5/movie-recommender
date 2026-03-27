@@ -1217,3 +1217,4 @@ with tab2:
             )
     else:
         st.markdown(f"<div style='color:#7a7590;font-size:0.88rem;margin-top:16px'>{T('no_reviews')}</div>", unsafe_allow_html=True)
+        '''
