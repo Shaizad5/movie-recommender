@@ -1079,10 +1079,27 @@ if typed.strip():
     st.stop()
 
 st.markdown(f"<div style='font-family:Playfair Display,serif;font-size:1.3rem;color:#f0ece4;margin-bottom:16px'>{home_category.replace('_',' ').title()}</div>", unsafe_allow_html=True)
+    # REPLACE this:
 home_cards, err = api_get_json("/home", params={"category": home_category, "limit": 24})
 if err or not home_cards:
     st.error(f"Home feed failed: {err or 'Unknown error'}")
     st.stop()
+
+# WITH this:
+with st.spinner("⏳ Connecting to server… may take ~30s on first load"):
+    home_cards, err = api_get_json("/home", params={"category": home_category, "limit": 24})
+
+if err or not home_cards:
+    st.warning("Server is still waking up. Please wait 30 seconds and refresh the page.")
+    if st.button("🔄 Retry"):
+        st.cache_data.clear()
+        st.rerun()
+    st.stop()
+```
+
+**3. Also verify your backend is actually alive** — open this in your browser right now:
+```
+https://movie-recommender-1-eopi.onrender.com/home?category=trending&limit=2
 poster_grid(home_cards, cols=grid_cols, key_prefix="home_feed", show_rating=True)
 ```
 
