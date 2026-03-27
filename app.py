@@ -9,10 +9,10 @@ import random
 
 # =============================
 
-API_BASE = “https://movie-recommender-1-eopi.onrender.com”
-TMDB_IMG = “https://image.tmdb.org/t/p/w500”
+API_BASE = "https://movie-recommender-1-eopi.onrender.com”
+TMDB_IMG = "https://image.tmdb.org/t/p/w500”
 
-st.set_page_config(page_title=“CineScope”, page_icon=“🎬”, layout=“wide”)
+st.set_page_config(page_title="CineScope”, page_icon="🎬”, layout="wide”)
 
 # =============================
 
@@ -21,329 +21,329 @@ st.set_page_config(page_title=“CineScope”, page_icon=“🎬”, layout=“w
 # =============================
 
 LANG_STRINGS = {
-“English”: {
-“site_sub”: “Discover · Rate · Review · Watchlist”,
-“search_placeholder”: “🔍  avengers, batman, love…”,
-“sign_in”: “Sign In”,
-“sign_up”: “Sign Up”,
-“username”: “Username”,
-“password”: “Password”,
-“confirm_password”: “Confirm Password”,
-“sign_in_btn”: “Sign In →”,
-“create_account”: “Create Account →”,
-“demo_hint”: “Demo → demo / demo”,
-“home”: “Home”,
-“mood_pick”: “Mood Pick”,
-“watchlist”: “Watchlist”,
-“analytics”: “Analytics”,
-“profile”: “Profile”,
-“sign_out”: “🚪 Sign Out”,
-“home_feed”: “Home Feed”,
-“category”: “Category”,
-“grid_cols”: “Grid columns”,
-“activity”: “Activity”,
-“open”: “Open →”,
-“back_home”: “← Back to Home”,
-“add_watchlist”: “🔖 Add to Watchlist”,
-“in_watchlist”: “✅ In Watchlist”,
-“recommendations”: “✅ Recommendations”,
-“rate_review”: “⭐ Rate & Review”,
-“your_rating”: “Your Rating”,
-“save_rating”: “💾 Save Rating”,
-“write_review”: “Write a Review”,
-“your_name”: “Your name”,
-“stars”: “Stars”,
-“review_placeholder”: “Share your thoughts…”,
-“submit_review”: “📝 Submit Review”,
-“no_reviews”: “No reviews yet. Be the first! 🎬”,
-“similar_movies”: “🔎 Similar Movies”,
-“more_genre”: “🎭 More in Genre”,
-“mood_title”: “🎯 Mood-Based Recommender”,
-“mood_subtitle”: “How are you feeling today? We’ll find the perfect movies.”,
-“pick”: “Pick”,
-“watchlist_title”: “🔖 My Watchlist”,
-“watchlist_empty”: “Watchlist is empty”,
-“watchlist_hint”: “Open any movie → click 🔖 Add to Watchlist”,
-“clear_watchlist”: “🗑️ Clear Watchlist”,
-“view”: “View”,
-“grid”: “Grid”,
-“list”: “List”,
-“added”: “Added”,
-“analytics_title”: “📊 Analytics Dashboard”,
-“movies_rated”: “Movies Rated”,
-“reviews”: “Reviews”,
-“avg_rating”: “Avg Rating”,
-“ratings_dist”: “⭐ Ratings Distribution”,
-“genre_breakdown”: “🎭 Genre Breakdown”,
-“rate_to_see”: “Rate movies to see your chart”,
-“add_to_see”: “Add movies to see genre breakdown”,
-“trending”: “📈 Trending Movies”,
-“simulated”: “Simulated popularity trend”,
-“recent_reviews”: “📝 Recent Reviews”,
-“no_reviews_yet”: “No reviews yet.”,
-“profile_title”: “👤 My Profile”,
-“member_since”: “Member since”,
-“rated”: “Rated”,
-“top_rated”: “🏆 Top Rated”,
-“no_ratings”: “Rate movies to build your profile!”,
-“wrong_credentials”: “Wrong username or password.”,
-“enter_username”: “Enter a username.”,
-“username_taken”: “Username taken.”,
-“passwords_no_match”: “Passwords don’t match.”,
-“password_short”: “Password too short.”,
-“enter_name”: “Enter your name.”,
-“write_something”: “Write something.”,
-“review_submitted”: “Review submitted! 🎉”,
-“rating_saved”: “Saved”,
-“min”: “min”,
-“votes”: “votes”,
-“language”: “Language”,
-“search_results”: “results for”,
-“movie_explorer”: “Movie Explorer”,
-“no_movie_selected”: “No movie selected.”,
+"English”: {
+"site_sub”: "Discover · Rate · Review · Watchlist”,
+"search_placeholder”: "🔍  avengers, batman, love…”,
+"sign_in”: "Sign In”,
+"sign_up”: "Sign Up”,
+"username”: "Username”,
+"password”: "Password”,
+"confirm_password”: "Confirm Password”,
+"sign_in_btn”: "Sign In →”,
+"create_account”: "Create Account →”,
+"demo_hint”: "Demo → demo / demo”,
+"home”: "Home”,
+"mood_pick”: "Mood Pick”,
+"watchlist”: "Watchlist”,
+"analytics”: "Analytics”,
+"profile”: "Profile”,
+"sign_out”: "🚪 Sign Out”,
+"home_feed”: "Home Feed”,
+"category”: "Category”,
+"grid_cols”: "Grid columns”,
+"activity”: "Activity”,
+"open”: "Open →”,
+"back_home”: "← Back to Home”,
+"add_watchlist”: "🔖 Add to Watchlist”,
+"in_watchlist”: "✅ In Watchlist”,
+"recommendations”: "✅ Recommendations”,
+"rate_review”: "⭐ Rate & Review”,
+"your_rating”: "Your Rating”,
+"save_rating”: "💾 Save Rating”,
+"write_review”: "Write a Review”,
+"your_name”: "Your name”,
+"stars”: "Stars”,
+"review_placeholder”: "Share your thoughts…”,
+"submit_review”: "📝 Submit Review”,
+"no_reviews”: "No reviews yet. Be the first! 🎬”,
+"similar_movies”: "🔎 Similar Movies”,
+"more_genre”: "🎭 More in Genre”,
+"mood_title”: "🎯 Mood-Based Recommender”,
+"mood_subtitle”: "How are you feeling today? We’ll find the perfect movies.”,
+"pick”: "Pick”,
+"watchlist_title”: "🔖 My Watchlist”,
+"watchlist_empty”: "Watchlist is empty”,
+"watchlist_hint”: "Open any movie → click 🔖 Add to Watchlist”,
+"clear_watchlist”: "🗑️ Clear Watchlist”,
+"view”: "View”,
+"grid”: "Grid”,
+"list”: "List”,
+"added”: "Added”,
+"analytics_title”: "📊 Analytics Dashboard”,
+"movies_rated”: "Movies Rated”,
+"reviews”: "Reviews”,
+"avg_rating”: "Avg Rating”,
+"ratings_dist”: "⭐ Ratings Distribution”,
+"genre_breakdown”: "🎭 Genre Breakdown”,
+"rate_to_see”: "Rate movies to see your chart”,
+"add_to_see”: "Add movies to see genre breakdown”,
+"trending”: "📈 Trending Movies”,
+"simulated”: "Simulated popularity trend”,
+"recent_reviews”: "📝 Recent Reviews”,
+"no_reviews_yet”: "No reviews yet.”,
+"profile_title”: "👤 My Profile”,
+"member_since”: "Member since”,
+"rated”: "Rated”,
+"top_rated”: "🏆 Top Rated”,
+"no_ratings”: "Rate movies to build your profile!”,
+"wrong_credentials”: "Wrong username or password.”,
+"enter_username”: "Enter a username.”,
+"username_taken”: "Username taken.”,
+"passwords_no_match”: "Passwords don’t match.”,
+"password_short”: "Password too short.”,
+"enter_name”: "Enter your name.”,
+"write_something”: "Write something.”,
+"review_submitted”: "Review submitted! 🎉”,
+"rating_saved”: "Saved”,
+"min”: "min”,
+"votes”: "votes”,
+"language”: "Language”,
+"search_results”: "results for”,
+"movie_explorer”: "Movie Explorer”,
+"no_movie_selected”: "No movie selected.”,
 },
-“हिन्दी”: {
-“site_sub”: “खोजें · रेट करें · समीक्षा करें · वॉचलिस्ट”,
-“search_placeholder”: “🔍  अवेंजर्स, बैटमैन, प्यार…”,
-“sign_in”: “साइन इन”,
-“sign_up”: “साइन अप”,
-“username”: “उपयोगकर्ता नाम”,
-“password”: “पासवर्ड”,
-“confirm_password”: “पासवर्ड की पुष्टि करें”,
-“sign_in_btn”: “साइन इन →”,
-“create_account”: “खाता बनाएं →”,
-“demo_hint”: “डेमो → demo / demo”,
-“home”: “होम”,
-“mood_pick”: “मूड पिक”,
-“watchlist”: “वॉचलिस्ट”,
-“analytics”: “विश्लेषण”,
-“profile”: “प्रोफाइल”,
-“sign_out”: “🚪 साइन आउट”,
-“home_feed”: “होम फ़ीड”,
-“category”: “श्रेणी”,
-“grid_cols”: “ग्रिड कॉलम”,
-“activity”: “गतिविधि”,
-“open”: “खोलें →”,
-“back_home”: “← होम पर वापस”,
-“add_watchlist”: “🔖 वॉचलिस्ट में जोड़ें”,
-“in_watchlist”: “✅ वॉचलिस्ट में है”,
-“recommendations”: “✅ सिफारिशें”,
-“rate_review”: “⭐ रेट और समीक्षा”,
-“your_rating”: “आपकी रेटिंग”,
-“save_rating”: “💾 रेटिंग सहेजें”,
-“write_review”: “समीक्षा लिखें”,
-“your_name”: “आपका नाम”,
-“stars”: “तारे”,
-“review_placeholder”: “अपने विचार साझा करें…”,
-“submit_review”: “📝 समीक्षा जमा करें”,
-“no_reviews”: “अभी तक कोई समीक्षा नहीं। पहले बनें! 🎬”,
-“similar_movies”: “🔎 समान फिल्में”,
-“more_genre”: “🎭 इस शैली में और”,
-“mood_title”: “🎯 मूड आधारित सिफारिशकर्ता”,
-“mood_subtitle”: “आज आप कैसा महसूस कर रहे हैं? हम सही फिल्में ढूंढेंगे।”,
-“pick”: “चुनें”,
-“watchlist_title”: “🔖 मेरी वॉचलिस्ट”,
-“watchlist_empty”: “वॉचलिस्ट खाली है”,
-“watchlist_hint”: “कोई फिल्म खोलें → 🔖 पर क्लिक करें”,
-“clear_watchlist”: “🗑️ वॉचलिस्ट साफ़ करें”,
-“view”: “दृश्य”,
-“grid”: “ग्रिड”,
-“list”: “सूची”,
-“added”: “जोड़ा गया”,
-“analytics_title”: “📊 विश्लेषण डैशबोर्ड”,
-“movies_rated”: “रेट की गई फिल्में”,
-“reviews”: “समीक्षाएं”,
-“avg_rating”: “औसत रेटिंग”,
-“ratings_dist”: “⭐ रेटिंग वितरण”,
-“genre_breakdown”: “🎭 शैली विश्लेषण”,
-“rate_to_see”: “चार्ट देखने के लिए फिल्में रेट करें”,
-“add_to_see”: “शैली विश्लेषण के लिए फिल्में जोड़ें”,
-“trending”: “📈 ट्रेंडिंग फिल्में”,
-“simulated”: “अनुमानित लोकप्रियता”,
-“recent_reviews”: “📝 हालिया समीक्षाएं”,
-“no_reviews_yet”: “अभी तक कोई समीक्षा नहीं।”,
-“profile_title”: “👤 मेरी प्रोफाइल”,
-“member_since”: “सदस्य बने”,
-“rated”: “रेट किया”,
-“top_rated”: “🏆 सर्वश्रेष्ठ रेटेड”,
-“no_ratings”: “अपनी प्रोफाइल बनाने के लिए फिल्में रेट करें!”,
-“wrong_credentials”: “गलत उपयोगकर्ता नाम या पासवर्ड।”,
-“enter_username”: “उपयोगकर्ता नाम दर्ज करें।”,
-“username_taken”: “उपयोगकर्ता नाम पहले से लिया गया है।”,
-“passwords_no_match”: “पासवर्ड मेल नहीं खाते।”,
-“password_short”: “पासवर्ड बहुत छोटा है।”,
-“enter_name”: “अपना नाम दर्ज करें।”,
-“write_something”: “कुछ लिखें।”,
-“review_submitted”: “समीक्षा जमा की गई! 🎉”,
-“rating_saved”: “सहेजा गया”,
-“min”: “मिनट”,
-“votes”: “वोट”,
-“language”: “भाषा”,
-“search_results”: “परिणाम”,
-“movie_explorer”: “मूवी एक्सप्लोरर”,
-“no_movie_selected”: “कोई फिल्म नहीं चुनी गई।”,
+"हिन्दी”: {
+"site_sub”: "खोजें · रेट करें · समीक्षा करें · वॉचलिस्ट”,
+"search_placeholder”: "🔍  अवेंजर्स, बैटमैन, प्यार…”,
+"sign_in”: "साइन इन”,
+"sign_up”: "साइन अप”,
+"username”: "उपयोगकर्ता नाम”,
+"password”: "पासवर्ड”,
+"confirm_password”: "पासवर्ड की पुष्टि करें”,
+"sign_in_btn”: "साइन इन →”,
+"create_account”: "खाता बनाएं →”,
+"demo_hint”: "डेमो → demo / demo”,
+"home”: "होम”,
+"mood_pick”: "मूड पिक”,
+"watchlist”: "वॉचलिस्ट”,
+"analytics”: "विश्लेषण”,
+"profile”: "प्रोफाइल”,
+"sign_out”: "🚪 साइन आउट”,
+"home_feed”: "होम फ़ीड”,
+"category”: "श्रेणी”,
+"grid_cols”: "ग्रिड कॉलम”,
+"activity”: "गतिविधि”,
+"open”: "खोलें →”,
+"back_home”: "← होम पर वापस”,
+"add_watchlist”: "🔖 वॉचलिस्ट में जोड़ें”,
+"in_watchlist”: "✅ वॉचलिस्ट में है”,
+"recommendations”: "✅ सिफारिशें”,
+"rate_review”: "⭐ रेट और समीक्षा”,
+"your_rating”: "आपकी रेटिंग”,
+"save_rating”: "💾 रेटिंग सहेजें”,
+"write_review”: "समीक्षा लिखें”,
+"your_name”: "आपका नाम”,
+"stars”: "तारे”,
+"review_placeholder”: "अपने विचार साझा करें…”,
+"submit_review”: "📝 समीक्षा जमा करें”,
+"no_reviews”: "अभी तक कोई समीक्षा नहीं। पहले बनें! 🎬”,
+"similar_movies”: "🔎 समान फिल्में”,
+"more_genre”: "🎭 इस शैली में और”,
+"mood_title”: "🎯 मूड आधारित सिफारिशकर्ता”,
+"mood_subtitle”: "आज आप कैसा महसूस कर रहे हैं? हम सही फिल्में ढूंढेंगे।”,
+"pick”: "चुनें”,
+"watchlist_title”: "🔖 मेरी वॉचलिस्ट”,
+"watchlist_empty”: "वॉचलिस्ट खाली है”,
+"watchlist_hint”: "कोई फिल्म खोलें → 🔖 पर क्लिक करें”,
+"clear_watchlist”: "🗑️ वॉचलिस्ट साफ़ करें”,
+"view”: "दृश्य”,
+"grid”: "ग्रिड”,
+"list”: "सूची”,
+"added”: "जोड़ा गया”,
+"analytics_title”: "📊 विश्लेषण डैशबोर्ड”,
+"movies_rated”: "रेट की गई फिल्में”,
+"reviews”: "समीक्षाएं”,
+"avg_rating”: "औसत रेटिंग”,
+"ratings_dist”: "⭐ रेटिंग वितरण”,
+"genre_breakdown”: "🎭 शैली विश्लेषण”,
+"rate_to_see”: "चार्ट देखने के लिए फिल्में रेट करें”,
+"add_to_see”: "शैली विश्लेषण के लिए फिल्में जोड़ें”,
+"trending”: "📈 ट्रेंडिंग फिल्में”,
+"simulated”: "अनुमानित लोकप्रियता”,
+"recent_reviews”: "📝 हालिया समीक्षाएं”,
+"no_reviews_yet”: "अभी तक कोई समीक्षा नहीं।”,
+"profile_title”: "👤 मेरी प्रोफाइल”,
+"member_since”: "सदस्य बने”,
+"rated”: "रेट किया”,
+"top_rated”: "🏆 सर्वश्रेष्ठ रेटेड”,
+"no_ratings”: "अपनी प्रोफाइल बनाने के लिए फिल्में रेट करें!”,
+"wrong_credentials”: "गलत उपयोगकर्ता नाम या पासवर्ड।”,
+"enter_username”: "उपयोगकर्ता नाम दर्ज करें।”,
+"username_taken”: "उपयोगकर्ता नाम पहले से लिया गया है।”,
+"passwords_no_match”: "पासवर्ड मेल नहीं खाते।”,
+"password_short”: "पासवर्ड बहुत छोटा है।”,
+"enter_name”: "अपना नाम दर्ज करें।”,
+"write_something”: "कुछ लिखें।”,
+"review_submitted”: "समीक्षा जमा की गई! 🎉”,
+"rating_saved”: "सहेजा गया”,
+"min”: "मिनट”,
+"votes”: "वोट”,
+"language”: "भाषा”,
+"search_results”: "परिणाम”,
+"movie_explorer”: "मूवी एक्सप्लोरर”,
+"no_movie_selected”: "कोई फिल्म नहीं चुनी गई।”,
 },
-“తెలుగు”: {
-“site_sub”: “కనుగొనండి · రేట్ చేయండి · సమీక్షించండి · వాచ్‌లిస్ట్”,
-“search_placeholder”: “🔍  అవెంజర్స్, బ్యాట్‌మ్యాన్…”,
-“sign_in”: “సైన్ ఇన్”,
-“sign_up”: “సైన్ అప్”,
-“username”: “వినియోగదారు పేరు”,
-“password”: “పాస్‌వర్డ్”,
-“confirm_password”: “పాస్‌వర్డ్ నిర్ధారించండి”,
-“sign_in_btn”: “సైన్ ఇన్ →”,
-“create_account”: “ఖాతా సృష్టించండి →”,
-“demo_hint”: “డెమో → demo / demo”,
-“home”: “హోమ్”,
-“mood_pick”: “మూడ్ పిక్”,
-“watchlist”: “వాచ్‌లిస్ట్”,
-“analytics”: “విశ్లేషణ”,
-“profile”: “ప్రొఫైల్”,
-“sign_out”: “🚪 సైన్ అవుట్”,
-“home_feed”: “హోమ్ ఫీడ్”,
-“category”: “వర్గం”,
-“grid_cols”: “గ్రిడ్ కాలమ్‌లు”,
-“activity”: “కార్యకలాపాలు”,
-“open”: “తెరవండి →”,
-“back_home”: “← హోమ్‌కి తిరిగి”,
-“add_watchlist”: “🔖 వాచ్‌లిస్ట్‌కి జోడించండి”,
-“in_watchlist”: “✅ వాచ్‌లిస్ట్‌లో ఉంది”,
-“recommendations”: “✅ సిఫార్సులు”,
-“rate_review”: “⭐ రేట్ & సమీక్ష”,
-“your_rating”: “మీ రేటింగ్”,
-“save_rating”: “💾 రేటింగ్ సేవ్ చేయండి”,
-“write_review”: “సమీక్ష రాయండి”,
-“your_name”: “మీ పేరు”,
-“stars”: “నక్షత్రాలు”,
-“review_placeholder”: “మీ అభిప్రాయాలు పంచుకోండి…”,
-“submit_review”: “📝 సమీక్ష సమర్పించండి”,
-“no_reviews”: “ఇంకా సమీక్షలు లేవు. మొదటివారు అవ్వండి! 🎬”,
-“similar_movies”: “🔎 సారూప్య చిత్రాలు”,
-“more_genre”: “🎭 ఈ శైలిలో మరిన్ని”,
-“mood_title”: “🎯 మూడ్ ఆధారిత సిఫార్సు”,
-“mood_subtitle”: “ఈరోజు మీకు ఎలా అనిపిస్తుందో చెప్పండి?”,
-“pick”: “ఎంచుకోండి”,
-“watchlist_title”: “🔖 నా వాచ్‌లిస్ట్”,
-“watchlist_empty”: “వాచ్‌లిస్ట్ ఖాళీగా ఉంది”,
-“watchlist_hint”: “ఏదైనా చిత్రం తెరవండి → 🔖 క్లిక్ చేయండి”,
-“clear_watchlist”: “🗑️ వాచ్‌లిస్ట్ క్లియర్ చేయండి”,
-“view”: “వీక్షణ”,
-“grid”: “గ్రిడ్”,
-“list”: “జాబితా”,
-“added”: “జోడించబడింది”,
-“analytics_title”: “📊 విశ్లేషణ డాష్‌బోర్డ్”,
-“movies_rated”: “రేట్ చేసిన చిత్రాలు”,
-“reviews”: “సమీక్షలు”,
-“avg_rating”: “సగటు రేటింగ్”,
-“ratings_dist”: “⭐ రేటింగ్ పంపిణీ”,
-“genre_breakdown”: “🎭 శైలి విశ్లేషణ”,
-“rate_to_see”: “చార్ట్ చూడటానికి చిత్రాలు రేట్ చేయండి”,
-“add_to_see”: “శైలి విశ్లేషణకు చిత్రాలు జోడించండి”,
-“trending”: “📈 ట్రెండింగ్ చిత్రాలు”,
-“simulated”: “అంచనా ప్రజాదరణ”,
-“recent_reviews”: “📝 తాజా సమీక్షలు”,
-“no_reviews_yet”: “ఇంకా సమీక్షలు లేవు.”,
-“profile_title”: “👤 నా ప్రొఫైల్”,
-“member_since”: “సభ్యుడు”,
-“rated”: “రేట్ చేసారు”,
-“top_rated”: “🏆 అత్యుత్తమ రేటింగ్”,
-“no_ratings”: “మీ ప్రొఫైల్ నిర్మించడానికి చిత్రాలు రేట్ చేయండి!”,
-“wrong_credentials”: “తప్పు వినియోగదారు పేరు లేదా పాస్‌వర్డ్.”,
-“enter_username”: “వినియోగదారు పేరు నమోదు చేయండి.”,
-“username_taken”: “వినియోగదారు పేరు ఇప్పటికే తీసుకోబడింది.”,
-“passwords_no_match”: “పాస్‌వర్డ్‌లు సరిపోలడం లేదు.”,
-“password_short”: “పాస్‌వర్డ్ చాలా చిన్నది.”,
-“enter_name”: “మీ పేరు నమోదు చేయండి.”,
-“write_something”: “ఏదైనా రాయండి.”,
-“review_submitted”: “సమీక్ష సమర్పించబడింది! 🎉”,
-“rating_saved”: “సేవ్ చేయబడింది”,
-“min”: “నిమిషాలు”,
-“votes”: “ఓట్లు”,
-“language”: “భాష”,
-“search_results”: “ఫలితాలు”,
-“movie_explorer”: “చిత్ర అన్వేషకుడు”,
-“no_movie_selected”: “చిత్రం ఎంచుకోబడలేదు.”,
+"తెలుగు”: {
+"site_sub”: "కనుగొనండి · రేట్ చేయండి · సమీక్షించండి · వాచ్‌లిస్ట్”,
+"search_placeholder”: "🔍  అవెంజర్స్, బ్యాట్‌మ్యాన్…”,
+"sign_in”: "సైన్ ఇన్”,
+"sign_up”: "సైన్ అప్”,
+"username”: "వినియోగదారు పేరు”,
+"password”: "పాస్‌వర్డ్”,
+"confirm_password”: "పాస్‌వర్డ్ నిర్ధారించండి”,
+"sign_in_btn”: "సైన్ ఇన్ →”,
+"create_account”: "ఖాతా సృష్టించండి →”,
+"demo_hint”: "డెమో → demo / demo”,
+"home”: "హోమ్”,
+"mood_pick”: "మూడ్ పిక్”,
+"watchlist”: "వాచ్‌లిస్ట్”,
+"analytics”: "విశ్లేషణ”,
+"profile”: "ప్రొఫైల్”,
+"sign_out”: "🚪 సైన్ అవుట్”,
+"home_feed”: "హోమ్ ఫీడ్”,
+"category”: "వర్గం”,
+"grid_cols”: "గ్రిడ్ కాలమ్‌లు”,
+"activity”: "కార్యకలాపాలు”,
+"open”: "తెరవండి →”,
+"back_home”: "← హోమ్‌కి తిరిగి”,
+"add_watchlist”: "🔖 వాచ్‌లిస్ట్‌కి జోడించండి”,
+"in_watchlist”: "✅ వాచ్‌లిస్ట్‌లో ఉంది”,
+"recommendations”: "✅ సిఫార్సులు”,
+"rate_review”: "⭐ రేట్ & సమీక్ష”,
+"your_rating”: "మీ రేటింగ్”,
+"save_rating”: "💾 రేటింగ్ సేవ్ చేయండి”,
+"write_review”: "సమీక్ష రాయండి”,
+"your_name”: "మీ పేరు”,
+"stars”: "నక్షత్రాలు”,
+"review_placeholder”: "మీ అభిప్రాయాలు పంచుకోండి…”,
+"submit_review”: "📝 సమీక్ష సమర్పించండి”,
+"no_reviews”: "ఇంకా సమీక్షలు లేవు. మొదటివారు అవ్వండి! 🎬”,
+"similar_movies”: "🔎 సారూప్య చిత్రాలు”,
+"more_genre”: "🎭 ఈ శైలిలో మరిన్ని”,
+"mood_title”: "🎯 మూడ్ ఆధారిత సిఫార్సు”,
+"mood_subtitle”: "ఈరోజు మీకు ఎలా అనిపిస్తుందో చెప్పండి?”,
+"pick”: "ఎంచుకోండి”,
+"watchlist_title”: "🔖 నా వాచ్‌లిస్ట్”,
+"watchlist_empty”: "వాచ్‌లిస్ట్ ఖాళీగా ఉంది”,
+"watchlist_hint”: "ఏదైనా చిత్రం తెరవండి → 🔖 క్లిక్ చేయండి”,
+"clear_watchlist”: "🗑️ వాచ్‌లిస్ట్ క్లియర్ చేయండి”,
+"view”: "వీక్షణ”,
+"grid”: "గ్రిడ్”,
+"list”: "జాబితా”,
+"added”: "జోడించబడింది”,
+"analytics_title”: "📊 విశ్లేషణ డాష్‌బోర్డ్”,
+"movies_rated”: "రేట్ చేసిన చిత్రాలు”,
+"reviews”: "సమీక్షలు”,
+"avg_rating”: "సగటు రేటింగ్”,
+"ratings_dist”: "⭐ రేటింగ్ పంపిణీ”,
+"genre_breakdown”: "🎭 శైలి విశ్లేషణ”,
+"rate_to_see”: "చార్ట్ చూడటానికి చిత్రాలు రేట్ చేయండి”,
+"add_to_see”: "శైలి విశ్లేషణకు చిత్రాలు జోడించండి”,
+"trending”: "📈 ట్రెండింగ్ చిత్రాలు”,
+"simulated”: "అంచనా ప్రజాదరణ”,
+"recent_reviews”: "📝 తాజా సమీక్షలు”,
+"no_reviews_yet”: "ఇంకా సమీక్షలు లేవు.”,
+"profile_title”: "👤 నా ప్రొఫైల్”,
+"member_since”: "సభ్యుడు”,
+"rated”: "రేట్ చేసారు”,
+"top_rated”: "🏆 అత్యుత్తమ రేటింగ్”,
+"no_ratings”: "మీ ప్రొఫైల్ నిర్మించడానికి చిత్రాలు రేట్ చేయండి!”,
+"wrong_credentials”: "తప్పు వినియోగదారు పేరు లేదా పాస్‌వర్డ్.”,
+"enter_username”: "వినియోగదారు పేరు నమోదు చేయండి.”,
+"username_taken”: "వినియోగదారు పేరు ఇప్పటికే తీసుకోబడింది.”,
+"passwords_no_match”: "పాస్‌వర్డ్‌లు సరిపోలడం లేదు.”,
+"password_short”: "పాస్‌వర్డ్ చాలా చిన్నది.”,
+"enter_name”: "మీ పేరు నమోదు చేయండి.”,
+"write_something”: "ఏదైనా రాయండి.”,
+"review_submitted”: "సమీక్ష సమర్పించబడింది! 🎉”,
+"rating_saved”: "సేవ్ చేయబడింది”,
+"min”: "నిమిషాలు”,
+"votes”: "ఓట్లు”,
+"language”: "భాష”,
+"search_results”: "ఫలితాలు”,
+"movie_explorer”: "చిత్ర అన్వేషకుడు”,
+"no_movie_selected”: "చిత్రం ఎంచుకోబడలేదు.”,
 },
-“العربية”: {
-“site_sub”: “اكتشف · قيّم · راجع · قائمة المشاهدة”,
-“search_placeholder”: “🔍  أفينجرز، باتمان، حب…”,
-“sign_in”: “تسجيل الدخول”,
-“sign_up”: “إنشاء حساب”,
-“username”: “اسم المستخدم”,
-“password”: “كلمة المرور”,
-“confirm_password”: “تأكيد كلمة المرور”,
-“sign_in_btn”: “تسجيل الدخول →”,
-“create_account”: “إنشاء حساب →”,
-“demo_hint”: “تجريبي → demo / demo”,
-“home”: “الرئيسية”,
-“mood_pick”: “اختيار المزاج”,
-“watchlist”: “قائمة المشاهدة”,
-“analytics”: “التحليلات”,
-“profile”: “الملف الشخصي”,
-“sign_out”: “🚪 تسجيل الخروج”,
-“home_feed”: “الصفحة الرئيسية”,
-“category”: “الفئة”,
-“grid_cols”: “أعمدة الشبكة”,
-“activity”: “النشاط”,
-“open”: “فتح →”,
-“back_home”: “← العودة للرئيسية”,
-“add_watchlist”: “🔖 إضافة للقائمة”,
-“in_watchlist”: “✅ في القائمة”,
-“recommendations”: “✅ توصيات”,
-“rate_review”: “⭐ تقييم ومراجعة”,
-“your_rating”: “تقييمك”,
-“save_rating”: “💾 حفظ التقييم”,
-“write_review”: “كتابة مراجعة”,
-“your_name”: “اسمك”,
-“stars”: “نجوم”,
-“review_placeholder”: “شارك أفكارك…”,
-“submit_review”: “📝 إرسال المراجعة”,
-“no_reviews”: “لا مراجعات بعد. كن الأول! 🎬”,
-“similar_movies”: “🔎 أفلام مشابهة”,
-“more_genre”: “🎭 المزيد من هذا النوع”,
-“mood_title”: “🎯 موصي بناءً على المزاج”,
-“mood_subtitle”: “كيف تشعر اليوم؟ سنجد الأفلام المثالية لك.”,
-“pick”: “اختر”,
-“watchlist_title”: “🔖 قائمة مشاهدتي”,
-“watchlist_empty”: “قائمة المشاهدة فارغة”,
-“watchlist_hint”: “افتح أي فيلم → انقر 🔖”,
-“clear_watchlist”: “🗑️ مسح القائمة”,
-“view”: “عرض”,
-“grid”: “شبكة”,
-“list”: “قائمة”,
-“added”: “أضيف”,
-“analytics_title”: “📊 لوحة التحليلات”,
-“movies_rated”: “الأفلام المقيّمة”,
-“reviews”: “المراجعات”,
-“avg_rating”: “متوسط التقييم”,
-“ratings_dist”: “⭐ توزيع التقييمات”,
-“genre_breakdown”: “🎭 توزيع الأنواع”,
-“rate_to_see”: “قيّم الأفلام لرؤية الرسم البياني”,
-“add_to_see”: “أضف أفلاماً لرؤية توزيع الأنواع”,
-“trending”: “📈 الأفلام الرائجة”,
-“simulated”: “شعبية تقديرية”,
-“recent_reviews”: “📝 أحدث المراجعات”,
-“no_reviews_yet”: “لا مراجعات بعد.”,
-“profile_title”: “👤 ملفي الشخصي”,
-“member_since”: “عضو منذ”,
-“rated”: “مقيّم”,
-“top_rated”: “🏆 الأعلى تقييماً”,
-“no_ratings”: “قيّم الأفلام لبناء ملفك الشخصي!”,
-“wrong_credentials”: “اسم المستخدم أو كلمة المرور خاطئة.”,
-“enter_username”: “أدخل اسم المستخدم.”,
-“username_taken”: “اسم المستخدم مأخوذ.”,
-“passwords_no_match”: “كلمات المرور غير متطابقة.”,
-“password_short”: “كلمة المرور قصيرة جداً.”,
-“enter_name”: “أدخل اسمك.”,
-“write_something”: “اكتب شيئاً.”,
-“review_submitted”: “تم إرسال المراجعة! 🎉”,
-“rating_saved”: “تم الحفظ”,
-“min”: “دقيقة”,
-“votes”: “أصوات”,
-“language”: “اللغة”,
-“search_results”: “نتائج”,
-“movie_explorer”: “مستكشف الأفلام”,
-“no_movie_selected”: “لم يتم اختيار فيلم.”,
+"العربية”: {
+"site_sub”: "اكتشف · قيّم · راجع · قائمة المشاهدة”,
+"search_placeholder”: "🔍  أفينجرز، باتمان، حب…”,
+"sign_in”: "تسجيل الدخول”,
+"sign_up”: "إنشاء حساب”,
+"username”: "اسم المستخدم”,
+"password”: "كلمة المرور”,
+"confirm_password”: "تأكيد كلمة المرور”,
+"sign_in_btn”: "تسجيل الدخول →”,
+"create_account”: "إنشاء حساب →”,
+"demo_hint”: "تجريبي → demo / demo”,
+"home”: "الرئيسية”,
+"mood_pick”: "اختيار المزاج”,
+"watchlist”: "قائمة المشاهدة”,
+"analytics”: "التحليلات”,
+"profile”: "الملف الشخصي”,
+"sign_out”: "🚪 تسجيل الخروج”,
+"home_feed”: "الصفحة الرئيسية”,
+"category”: "الفئة”,
+"grid_cols”: "أعمدة الشبكة”,
+"activity”: "النشاط”,
+"open”: "فتح →”,
+"back_home”: "← العودة للرئيسية”,
+"add_watchlist”: "🔖 إضافة للقائمة”,
+"in_watchlist”: "✅ في القائمة”,
+"recommendations”: "✅ توصيات”,
+"rate_review”: "⭐ تقييم ومراجعة”,
+"your_rating”: "تقييمك”,
+"save_rating”: "💾 حفظ التقييم”,
+"write_review”: "كتابة مراجعة”,
+"your_name”: "اسمك”,
+"stars”: "نجوم”,
+"review_placeholder”: "شارك أفكارك…”,
+"submit_review”: "📝 إرسال المراجعة”,
+"no_reviews”: "لا مراجعات بعد. كن الأول! 🎬”,
+"similar_movies”: "🔎 أفلام مشابهة”,
+"more_genre”: "🎭 المزيد من هذا النوع”,
+"mood_title”: "🎯 موصي بناءً على المزاج”,
+"mood_subtitle”: "كيف تشعر اليوم؟ سنجد الأفلام المثالية لك.”,
+"pick”: "اختر”,
+"watchlist_title”: "🔖 قائمة مشاهدتي”,
+"watchlist_empty”: "قائمة المشاهدة فارغة”,
+"watchlist_hint”: "افتح أي فيلم → انقر 🔖”,
+"clear_watchlist”: "🗑️ مسح القائمة”,
+"view”: "عرض”,
+"grid”: "شبكة”,
+"list”: "قائمة”,
+"added”: "أضيف”,
+"analytics_title”: "📊 لوحة التحليلات”,
+"movies_rated”: "الأفلام المقيّمة”,
+"reviews”: "المراجعات”,
+"avg_rating”: "متوسط التقييم”,
+"ratings_dist”: "⭐ توزيع التقييمات”,
+"genre_breakdown”: "🎭 توزيع الأنواع”,
+"rate_to_see”: "قيّم الأفلام لرؤية الرسم البياني”,
+"add_to_see”: "أضف أفلاماً لرؤية توزيع الأنواع”,
+"trending”: "📈 الأفلام الرائجة”,
+"simulated”: "شعبية تقديرية”,
+"recent_reviews”: "📝 أحدث المراجعات”,
+"no_reviews_yet”: "لا مراجعات بعد.”,
+"profile_title”: "👤 ملفي الشخصي”,
+"member_since”: "عضو منذ”,
+"rated”: "مقيّم”,
+"top_rated”: "🏆 الأعلى تقييماً”,
+"no_ratings”: "قيّم الأفلام لبناء ملفك الشخصي!”,
+"wrong_credentials”: "اسم المستخدم أو كلمة المرور خاطئة.”,
+"enter_username”: "أدخل اسم المستخدم.”,
+"username_taken”: "اسم المستخدم مأخوذ.”,
+"passwords_no_match”: "كلمات المرور غير متطابقة.”,
+"password_short”: "كلمة المرور قصيرة جداً.”,
+"enter_name”: "أدخل اسمك.”,
+"write_something”: "اكتب شيئاً.”,
+"review_submitted”: "تم إرسال المراجعة! 🎉”,
+"rating_saved”: "تم الحفظ”,
+"min”: "دقيقة”,
+"votes”: "أصوات”,
+"language”: "اللغة”,
+"search_results”: "نتائج”,
+"movie_explorer”: "مستكشف الأفلام”,
+"no_movie_selected”: "لم يتم اختيار فيلم.”,
 },
 }
 
@@ -402,7 +402,7 @@ hr { border-color:var(--border) !important; }
 .lang-badge { display:inline-block;background:rgba(232,184,75,0.12);border:1px solid rgba(232,184,75,0.25);border-radius:20px;padding:4px 14px;font-size:0.8rem;color:var(--accent);margin:2px;cursor:pointer; }
 </style>
 
-“””, unsafe_allow_html=True)
+"””, unsafe_allow_html=True)
 
 # =============================
 
@@ -411,42 +411,42 @@ hr { border-color:var(--border) !important; }
 # =============================
 
 defaults = {
-“view”: “home”, “selected_tmdb_id”: None,
-“reviews”: {}, “user_ratings”: {},
-“watchlist”: [], “logged_in”: False,
-“username”: “”, “mood_selected”: None,
-“language”: “English”,
-“movie_title_cache”: {},
+"view”: "home”, "selected_tmdb_id”: None,
+"reviews”: {}, "user_ratings”: {},
+"watchlist”: [], "logged_in”: False,
+"username”: "”, "mood_selected”: None,
+"language”: "English”,
+"movie_title_cache”: {},
 }
 for k, v in defaults.items():
 if k not in st.session_state:
 st.session_state[k] = v
 
 def T(key):
-lang = st.session_state.get(“language”, “English”)
-return LANG_STRINGS.get(lang, LANG_STRINGS[“English”]).get(key, LANG_STRINGS[“English”].get(key, key))
+lang = st.session_state.get("language”, "English”)
+return LANG_STRINGS.get(lang, LANG_STRINGS["English”]).get(key, LANG_STRINGS["English”].get(key, key))
 
-USERS = {“sana”: “1234”, “demo”: “demo”, “admin”: “admin”}
+USERS = {"sana”: "1234”, "demo”: "demo”, "admin”: "admin”}
 
-qp_view = st.query_params.get(“view”)
-qp_id   = st.query_params.get(“id”)
-if qp_view in (“home”,“details”,“analytics”,“watchlist”,“mood”,“profile”):
+qp_view = st.query_params.get("view”)
+qp_id   = st.query_params.get("id”)
+if qp_view in ("home”,"details”,"analytics”,"watchlist”,"mood”,"profile”):
 st.session_state.view = qp_view
 if qp_id:
 try:
 st.session_state.selected_tmdb_id = int(qp_id)
-st.session_state.view = “details”
+st.session_state.view = "details”
 except:
 pass
 
 def goto(view, tmdb_id=None):
 st.session_state.view = view
-st.query_params[“view”] = view
+st.query_params["view”] = view
 if tmdb_id:
 st.session_state.selected_tmdb_id = int(tmdb_id)
-st.query_params[“id”] = str(int(tmdb_id))
-elif “id” in st.query_params:
-del st.query_params[“id”]
+st.query_params["id”] = str(int(tmdb_id))
+elif "id” in st.query_params:
+del st.query_params["id”]
 st.rerun()
 
 # =============================
@@ -459,7 +459,7 @@ if not st.session_state.logged_in:
 # Language selector on login page
 lang_col1, lang_col2 = st.columns([3,1])
 with lang_col2:
-selected_lang = st.selectbox(“🌐”, list(LANG_STRINGS.keys()), index=list(LANG_STRINGS.keys()).index(st.session_state.language), label_visibility=“collapsed”)
+selected_lang = st.selectbox("🌐”, list(LANG_STRINGS.keys()), index=list(LANG_STRINGS.keys()).index(st.session_state.language), label_visibility="collapsed”)
 if selected_lang != st.session_state.language:
 st.session_state.language = selected_lang
 st.rerun()
@@ -536,13 +536,13 @@ full = int(n); half = 1 if (n - full) >= 0.5 else 0; empty = 5 - full - half
 return f”<span class='stars'>{‘★’*full}{‘½’ if half else ‘’}{‘☆’*empty}</span>”
 
 def rating_badge_html(rating, vote_count=0):
-vc = f”<span class='vote-count' style='margin-left:6px'>{vote_count:,} {T(‘votes’)}</span>” if vote_count else “”
+vc = f”<span class='vote-count' style='margin-left:6px'>{vote_count:,} {T(‘votes’)}</span>” if vote_count else "”
 return f”<span class='rating-badge'>⭐ {rating:.1f}/10</span>{vc}”
 
 def render_rating_bars(rating):
-bars = [(“10”, int(rating*3)), (“8”, int(rating*6)), (“6”, int(rating*4)), (“4”, int(rating*2)), (“2”, max(0,int(rating-5)))]
+bars = [("10”, int(rating*3)), ("8”, int(rating*6)), ("6”, int(rating*4)), ("4”, int(rating*2)), ("2”, max(0,int(rating-5)))]
 mx = max(v for _,v in bars) or 1
-html = “”
+html = "”
 for label, val in bars:
 pct = int((val/mx)*100)
 html += (f”<div style='display:flex;align-items:center;gap:8px;margin:4px 0'>”
@@ -559,18 +559,18 @@ st.markdown(html, unsafe_allow_html=True)
 # =============================
 
 def in_watchlist(tmdb_id):
-return any(w[“tmdb_id”] == tmdb_id for w in st.session_state.watchlist)
+return any(w["tmdb_id”] == tmdb_id for w in st.session_state.watchlist)
 
 def add_to_watchlist(tmdb_id, title, poster_url, genres=””):
 if not in_watchlist(tmdb_id):
 st.session_state.watchlist.append({
-“tmdb_id”: tmdb_id, “title”: title, “poster_url”: poster_url,
-“genres”: genres, “added_on”: datetime.now().strftime(”%b %d, %Y”),
+"tmdb_id”: tmdb_id, "title”: title, "poster_url”: poster_url,
+"genres”: genres, "added_on”: datetime.now().strftime(”%b %d, %Y”),
 })
 st.session_state.movie_title_cache[tmdb_id] = title
 
 def remove_from_watchlist(tmdb_id):
-st.session_state.watchlist = [w for w in st.session_state.watchlist if w[“tmdb_id”] != tmdb_id]
+st.session_state.watchlist = [w for w in st.session_state.watchlist if w["tmdb_id”] != tmdb_id]
 
 # =============================
 
@@ -578,9 +578,9 @@ st.session_state.watchlist = [w for w in st.session_state.watchlist if w[“tmdb
 
 # =============================
 
-def poster_grid(cards, cols=6, key_prefix=“grid”, show_rating=False):
+def poster_grid(cards, cols=6, key_prefix="grid”, show_rating=False):
 if not cards:
-st.info(“No movies to show.”)
+st.info("No movies to show.”)
 return
 rows = (len(cards) + cols - 1) // cols
 idx = 0
@@ -589,8 +589,8 @@ colset = st.columns(cols)
 for c in range(cols):
 if idx >= len(cards): break
 m = cards[idx]; idx += 1
-tmdb_id = m.get(“tmdb_id”); title = m.get(“title”,“Untitled”)
-poster = m.get(“poster_url”); rating = m.get(“vote_average”) or m.get(“rating”)
+tmdb_id = m.get("tmdb_id”); title = m.get("title”,"Untitled”)
+poster = m.get("poster_url”); rating = m.get("vote_average”) or m.get("rating”)
 with colset[c]:
 if poster:
 st.image(poster, use_column_width=True)
@@ -599,35 +599,35 @@ st.markdown(”<div style='background:#1a1a26;border-radius:8px;height:180px;dis
 st.markdown(f”<div class='movie-title'>{title}</div>”, unsafe_allow_html=True)
 if show_rating and rating:
 st.markdown(f”<div style='color:#f5c518;font-size:0.78rem'>⭐ {float(rating):.1f}</div>”, unsafe_allow_html=True)
-if st.button(T(“open”), key=f”{key_prefix}*{r}*{c}*{idx}*{tmdb_id}”):
+if st.button(T("open”), key=f”{key_prefix}*{r}*{c}*{idx}*{tmdb_id}”):
 if tmdb_id:
 st.session_state.movie_title_cache[tmdb_id] = title
-goto(“details”, tmdb_id)
+goto("details”, tmdb_id)
 
 def to_cards_from_tfidf(items):
 cards = []
 for x in items or []:
-t = x.get(“tmdb”) or {}
-if t.get(“tmdb_id”):
-cards.append({“tmdb_id”: t[“tmdb_id”], “title”: t.get(“title”) or x.get(“title”,“Untitled”), “poster_url”: t.get(“poster_url”), “vote_average”: t.get(“vote_average”)})
+t = x.get("tmdb”) or {}
+if t.get("tmdb_id”):
+cards.append({"tmdb_id”: t["tmdb_id”], "title”: t.get("title”) or x.get("title”,"Untitled”), "poster_url”: t.get("poster_url”), "vote_average”: t.get("vote_average”)})
 return cards
 
 def parse_search_to_cards(data, keyword, limit=24):
 keyword_l = keyword.strip().lower()
-if isinstance(data, dict) and “results” in data:
-raw = [{“tmdb_id”: int(m[“id”]), “title”: (m.get(“title”) or “”).strip(),
-“poster_url”: f”{TMDB_IMG}{m[‘poster_path’]}” if m.get(“poster_path”) else None,
-“release_date”: m.get(“release_date”,””), “vote_average”: m.get(“vote_average”)}
-for m in data.get(“results”,[]) if m.get(“title”) and m.get(“id”)]
+if isinstance(data, dict) and "results” in data:
+raw = [{"tmdb_id”: int(m["id”]), "title”: (m.get("title”) or "”).strip(),
+"poster_url”: f”{TMDB_IMG}{m[‘poster_path’]}” if m.get("poster_path”) else None,
+"release_date”: m.get("release_date”,””), "vote_average”: m.get("vote_average”)}
+for m in data.get("results”,[]) if m.get("title”) and m.get("id”)]
 elif isinstance(data, list):
-raw = [{“tmdb_id”: int(m.get(“tmdb_id”) or m.get(“id”,0)), “title”: (m.get(“title”) or “”).strip(),
-“poster_url”: m.get(“poster_url”), “release_date”: m.get(“release_date”,””), “vote_average”: m.get(“vote_average”)}
-for m in data if (m.get(“title”) and (m.get(“tmdb_id”) or m.get(“id”)))]
+raw = [{"tmdb_id”: int(m.get("tmdb_id”) or m.get("id”,0)), "title”: (m.get("title”) or "”).strip(),
+"poster_url”: m.get("poster_url”), "release_date”: m.get("release_date”,””), "vote_average”: m.get("vote_average”)}
+for m in data if (m.get("title”) and (m.get("tmdb_id”) or m.get("id”)))]
 else:
 return [], []
-matched = [x for x in raw if keyword_l in x[“title”].lower()] or raw
-suggestions = [(f”{x[‘title’]} ({x[‘release_date’][:4]})” if x.get(“release_date”) else x[“title”], x[“tmdb_id”]) for x in matched[:10]]
-cards = [{“tmdb_id”: x[“tmdb_id”], “title”: x[“title”], “poster_url”: x[“poster_url”], “vote_average”: x.get(“vote_average”)} for x in matched[:limit]]
+matched = [x for x in raw if keyword_l in x["title”].lower()] or raw
+suggestions = [(f”{x[‘title’]} ({x[‘release_date’][:4]})” if x.get("release_date”) else x["title”], x["tmdb_id”]) for x in matched[:10]]
+cards = [{"tmdb_id”: x["tmdb_id”], "title”: x["title”], "poster_url”: x["poster_url”], "vote_average”: x.get("vote_average”)} for x in matched[:limit]]
 return suggestions, cards
 
 # =============================
@@ -638,62 +638,62 @@ return suggestions, cards
 
 MOODS = [
 {
-“emoji”: “😂”,
-“label”: “Feel-Good”,
-“desc”: {“English”: “Comedy & fun”, “हिन्दी”: “कॉमेडी और मस्ती”, “తెలుగు”: “కామెడీ & వినోదం”, “العربية”: “كوميديا وترفيه”},
-“genres”: [“Comedy”,“Animation”,“Family”],
-“queries”: [“funny comedy movie”, “family comedy film”, “animated comedy”],
-“color”: “#f5c518”,
+"emoji”: "😂”,
+"label”: "Feel-Good”,
+"desc”: {"English”: "Comedy & fun”, "हिन्दी”: "कॉमेडी और मस्ती”, "తెలుగు”: "కామెడీ & వినోదం”, "العربية”: "كوميديا وترفيه”},
+"genres”: ["Comedy”,"Animation”,"Family”],
+"queries”: ["funny comedy movie”, "family comedy film”, "animated comedy”],
+"color”: "#f5c518”,
 },
 {
-“emoji”: “😱”,
-“label”: “Thriller”,
-“desc”: {“English”: “Edge-of-seat suspense”, “हिन्दी”: “रोमांचक सस्पेंस”, “తెలుగు”: “థ్రిల్లర్ సస్పెన్స్”, “العربية”: “توتر وإثارة”},
-“genres”: [“Thriller”,“Horror”,“Mystery”],
-“queries”: [“thriller suspense movie”, “horror mystery film”, “psychological thriller”],
-“color”: “#c0392b”,
+"emoji”: "😱”,
+"label”: "Thriller”,
+"desc”: {"English”: "Edge-of-seat suspense”, "हिन्दी”: "रोमांचक सस्पेंस”, "తెలుగు”: "థ్రిల్లర్ సస్పెన్స్”, "العربية”: "توتر وإثارة”},
+"genres”: ["Thriller”,"Horror”,"Mystery”],
+"queries”: ["thriller suspense movie”, "horror mystery film”, "psychological thriller”],
+"color”: "#c0392b”,
 },
 {
-“emoji”: “❤️”,
-“label”: “Romantic”,
-“desc”: {“English”: “Love stories”, “हिन्दी”: “प्रेम कहानियां”, “తెలుగు”: “ప్రేమ కథలు”, “العربية”: “قصص حب”},
-“genres”: [“Romance”,“Drama”],
-“queries”: [“romance love story”, “romantic drama film”, “love movie”],
-“color”: “#e84393”,
+"emoji”: "❤️”,
+"label”: "Romantic”,
+"desc”: {"English”: "Love stories”, "हिन्दी”: "प्रेम कहानियां”, "తెలుగు”: "ప్రేమ కథలు”, "العربية”: "قصص حب”},
+"genres”: ["Romance”,"Drama”],
+"queries”: ["romance love story”, "romantic drama film”, "love movie”],
+"color”: "#e84393”,
 },
 {
-“emoji”: “🚀”,
-“label”: “Adventure”,
-“desc”: {“English”: “Action & epic journeys”, “हिन्दी”: “एक्शन और महाकाव्य”, “తెలుగు”: “యాక్షన్ & సాహసాలు”, “العربية”: “أكشن ومغامرات”},
-“genres”: [“Action”,“Adventure”,“Sci-Fi”],
-“queries”: [“action adventure movie”, “epic journey film”, “action blockbuster”],
-“color”: “#e8b84b”,
+"emoji”: "🚀”,
+"label”: "Adventure”,
+"desc”: {"English”: "Action & epic journeys”, "हिन्दी”: "एक्शन और महाकाव्य”, "తెలుగు”: "యాక్షన్ & సాహసాలు”, "العربية”: "أكشن ومغامرات”},
+"genres”: ["Action”,"Adventure”,"Sci-Fi”],
+"queries”: ["action adventure movie”, "epic journey film”, "action blockbuster”],
+"color”: "#e8b84b”,
 },
 {
-“emoji”: “😢”,
-“label”: “Emotional”,
-“desc”: {“English”: “Tear-jerkers”, “हिन्दी”: “भावुक फिल्में”, “తెలుగు”: “భావోద్వేగ చిత్రాలు”, “العربية”: “أفلام مؤثرة”},
-“genres”: [“Drama”,“History”,“War”],
-“queries”: [“emotional drama film”, “tearjerker movie”, “moving drama”],
-“color”: “#9b59b6”,
+"emoji”: "😢”,
+"label”: "Emotional”,
+"desc”: {"English”: "Tear-jerkers”, "हिन्दी”: "भावुक फिल्में”, "తెలుగు”: "భావోద్వేగ చిత్రాలు”, "العربية”: "أفلام مؤثرة”},
+"genres”: ["Drama”,"History”,"War”],
+"queries”: ["emotional drama film”, "tearjerker movie”, "moving drama”],
+"color”: "#9b59b6”,
 },
 {
-“emoji”: “🧠”,
-“label”: “Mind-Bending”,
-“desc”: {“English”: “Twists & sci-fi”, “हिन्दी”: “दिमाग घुमाने वाली”, “తెలుగు”: “మైండ్ బెండింగ్”, “العربية”: “خيال علمي وغموض”},
-“genres”: [“Science Fiction”,“Mystery”,“Thriller”],
-“queries”: [“mind bending sci-fi”, “complex plot twist movie”, “cerebral science fiction”],
-“color”: “#1abc9c”,
+"emoji”: "🧠”,
+"label”: "Mind-Bending”,
+"desc”: {"English”: "Twists & sci-fi”, "हिन्दी”: "दिमाग घुमाने वाली”, "తెలుగు”: "మైండ్ బెండింగ్”, "العربية”: "خيال علمي وغموض”},
+"genres”: ["Science Fiction”,"Mystery”,"Thriller”],
+"queries”: ["mind bending sci-fi”, "complex plot twist movie”, "cerebral science fiction”],
+"color”: "#1abc9c”,
 },
 ]
 
 def get_mood_desc(mood):
-lang = st.session_state.get(“language”,“English”)
-return mood[“desc”].get(lang, mood[“desc”][“English”])
+lang = st.session_state.get("language”,"English”)
+return mood["desc”].get(lang, mood["desc”]["English”])
 
 def get_mood_label(mood):
 # mood label stays the same (used as key), desc is translated
-return mood[“label”]
+return mood["label”]
 
 # =============================
 
@@ -703,7 +703,7 @@ return mood[“label”]
 
 with st.sidebar:
 uname = st.session_state.username
-initial = uname[0].upper() if uname else “?”
+initial = uname[0].upper() if uname else "?”
 st.markdown(
 f”<div style='display:flex;align-items:center;gap:12px;margin-bottom:16px'>”
 f”<div class='profile-avatar'>{initial}</div>”
@@ -760,7 +760,7 @@ st.divider()
 
 # ==========================================================
 
-if st.session_state.view == “profile”:
+if st.session_state.view == "profile”:
 uname = st.session_state.username
 total_rated = len(st.session_state.user_ratings)
 total_rev   = sum(len(v) for v in st.session_state.reviews.values())
@@ -847,7 +847,7 @@ with right:
 
 # ==========================================================
 
-elif st.session_state.view == “mood”:
+elif st.session_state.view == "mood”:
 st.markdown(f”<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:4px'>{T(‘mood_title’)}</div>”, unsafe_allow_html=True)
 st.markdown(f”<div style='color:#7a7590;font-size:0.88rem;margin-bottom:24px'>{T(‘mood_subtitle’)}</div>”, unsafe_allow_html=True)
 
@@ -909,7 +909,7 @@ if st.session_state.mood_selected:
 
 # ==========================================================
 
-elif st.session_state.view == “watchlist”:
+elif st.session_state.view == "watchlist”:
 st.markdown(f”<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:4px'>{T(‘watchlist_title’)}</div>”, unsafe_allow_html=True)
 st.markdown(f”<div style='color:#7a7590;font-size:0.88rem;margin-bottom:20px'>{len(st.session_state.watchlist)} movies saved</div>”, unsafe_allow_html=True)
 
@@ -969,7 +969,7 @@ else:
 
 # ==========================================================
 
-elif st.session_state.view == “analytics”:
+elif st.session_state.view == "analytics”:
 st.markdown(f”<div style='font-family:Playfair Display,serif;font-size:1.6rem;color:#f0ece4;margin-bottom:20px;border-left:3px solid #e8b84b;padding-left:12px'>{T(‘analytics_title’)}</div>”, unsafe_allow_html=True)
 
 ```
@@ -1051,8 +1051,8 @@ else:
 
 # ==========================================================
 
-elif st.session_state.view == “home”:
-typed = st.text_input(“Search”, placeholder=T(“search_placeholder”), label_visibility=“collapsed”)
+elif st.session_state.view == "home”:
+typed = st.text_input("Search”, placeholder=T("search_placeholder”), label_visibility="collapsed”)
 st.divider()
 
 ```
@@ -1092,11 +1092,11 @@ poster_grid(home_cards, cols=grid_cols, key_prefix="home_feed", show_rating=True
 
 # ==========================================================
 
-elif st.session_state.view == “details”:
+elif st.session_state.view == "details”:
 tmdb_id = st.session_state.selected_tmdb_id
 if not tmdb_id:
-st.warning(T(“no_movie_selected”))
-if st.button(“← Back”): goto(“home”)
+st.warning(T("no_movie_selected”))
+if st.button("← Back”): goto("home”)
 st.stop()
 
 ```
