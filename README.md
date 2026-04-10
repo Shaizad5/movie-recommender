@@ -3,7 +3,7 @@
 A machine learning based movie recommendation web app built with **Python** and **Streamlit** using **content-based filtering** and similarity models.
 
 ## 🚀 Live Demo
-https://movie-recommender-ywuztjentqtaf5njj93psv.streamlit.app/
+https://movie-recommender-ywuztjentqtaf5njj93psv.streamlit.app/?view=details&id=945907
 
 ## 📌 Features
 - Recommend similar movies based on selected title
